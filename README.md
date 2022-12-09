@@ -1,3 +1,5 @@
+[TOC]
+
 # TeraCloud Management Platform
 
 ## Environment
@@ -23,4 +25,13 @@ pip3 install selenium
     - 下载对应版本的chrome driver
 
       [http://chromedriver.storage.googleapis.com/index.html](http://chromedriver.storage.googleapis.com/index.html)
+
+- PyQt5
+
+  ```
+  pip3 install PyQt5
+  pip3 install PyQt5-tools    # for qt designer
+  ```
+
+  see details: [PyQt5安装以及使用教程合集(2022)-知乎](https://zhuanlan.zhihu.com/p/162866700)
 
