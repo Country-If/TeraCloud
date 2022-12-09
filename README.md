@@ -1,4 +1,6 @@
-[TOC]
+- [TeraCloud Management Platform](#teracloud-management-platform)
+  - [Environment](#environment)
+  - [Requirements](#requirements)
 
 # TeraCloud Management Platform
 
