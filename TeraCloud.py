@@ -27,13 +27,14 @@ class TeraCloud:
         self.sleep = sleep_time
         self.browser_source = None
 
+        driver_path = "ChromeDriver/chromedriver.exe"
         chrome_options = webdriver.ChromeOptions()
         if not debug:  # 不显示浏览器
             chrome_options.add_argument('--headless')
             chrome_options.add_argument('--disable-gpu')
-        if not os.path.exists("ChromeDriver/chromedriver.exe"):
+        if not os.path.exists(driver_path):
             raise Exception("chromedriver.exe not found")
-        chrome_service = Service("ChromeDriver/chromedriver.exe")
+        chrome_service = Service(driver_path)
         self.browser = webdriver.Chrome(service=chrome_service, options=chrome_options)
         # 规避检测
         self.browser.execute_cdp_cmd("Page.addScriptToEvaluateOnNewDocument", {
