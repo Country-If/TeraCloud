@@ -3,13 +3,15 @@
 
 __author__ = "Maylon"
 
+import hashlib
 import os
 import sys
 from threading import Thread
-import hashlib
-from TeraCloud import TeraCloud
+
 from PyQt5 import uic
 from PyQt5.QtWidgets import QApplication, QMessageBox
+
+from TeraCloud import TeraCloud
 
 
 class Main_login_ui:
@@ -30,11 +32,8 @@ class Main_login_ui:
         self.capacity = None
 
     def login(self):
-        self.input_check()
-
-    def input_check(self):
         """
-        检查输入
+        登录
 
         :return: None
         """
@@ -87,12 +86,12 @@ class Main_login_ui:
                     return False
         else:
             with open('Account/main.txt', 'r') as f:
-                username_ = f.readline().strip()
-                password_ = f.readline().strip()
-                capacity_ = f.readline().strip()
-            if username_ == username and password_ == hashlib.md5(password.encode('utf-8')).hexdigest():
+                username_fromFile = f.readline().strip()
+                password_hash = f.readline().strip()
+                capacity_fromFile = f.readline().strip()
+            if username_fromFile == username and password_hash == hashlib.md5(password.encode('utf-8')).hexdigest():
                 self.username = username
-                self.capacity = capacity_
+                self.capacity = capacity_fromFile
                 return True
             else:
                 return False

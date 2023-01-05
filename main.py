@@ -3,7 +3,7 @@
 
 __author__ = "Maylon"
 
-from PyQt5.QtWidgets import QApplication, QMessageBox
+from PyQt5.QtWidgets import QApplication
 import sys
 
 from main_login import Main_login_ui
