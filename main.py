@@ -3,10 +3,11 @@
 
 __author__ = "Maylon"
 
-from PyQt5.QtWidgets import QApplication
+from PyQt5.QtWidgets import QApplication, QMessageBox
 import sys
 
 from main_login import Main_login_ui
+from main_ui import Main_ui
 
 
 class Main:
@@ -15,11 +16,14 @@ class Main:
 
     def __setup_ui(self):
         self.login_ui = Main_login_ui()
+        self.main_ui = Main_ui()
+
         self.login_ui.ui.Login_btn.clicked.connect(self.login)
+        self.login_ui.ui.passwd.returnPressed.connect(self.login)
 
     def login(self):
         if self.login_ui.login_status:
-            self.login_ui.ui.close()
+            self.main_ui.ui.show()
 
 
 def main():
