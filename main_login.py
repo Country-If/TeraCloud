@@ -21,6 +21,7 @@ class Main_login_ui:
         self.ui.Login_btn.clicked.connect(self.login)
 
         # 其他属性
+        self.login_status = False
         self.username = None
         self.password = None
 
@@ -45,6 +46,7 @@ class Main_login_ui:
         elif ',' in username or ',' in password:
             QMessageBox.critical(self.ui, '错误', '含有非法字符')
         else:
+            self.login_status = True
             self.username = username
             self.password = hashlib.md5(password.encode('utf-8')).hexdigest()
 
