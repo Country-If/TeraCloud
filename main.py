@@ -3,9 +3,12 @@
 
 __author__ = "Maylon"
 
-from PyQt5.QtWidgets import QApplication
 import sys
+from threading import Thread
 
+from PyQt5.QtWidgets import QApplication
+
+from Signal import MySignals
 from main_login import Main_login_ui
 from main_ui import Main_ui
 
@@ -18,12 +21,26 @@ class Main:
         self.login_ui = Main_login_ui()
         self.main_ui = Main_ui()
 
+        self.mySignals = MySignals()
+
+        # 信号与槽连接
         self.login_ui.ui.Login_btn.clicked.connect(self.login)
         self.login_ui.ui.passwd.returnPressed.connect(self.login)
+        self.mySignals.login2main_signal.connect(self.login2main)
 
     def login(self):
-        if self.login_ui.login_status:
-            self.main_ui.ui.show()
+        def thread():
+            while True:
+                if self.login_ui.login_status:
+                    self.mySignals.login2main_signal.emit()
+                    break
+
+        t = Thread(target=thread)
+        t.start()
+
+    def login2main(self):
+        self.login_ui.ui.close()
+        self.main_ui.ui.show()
 
 
 def main():

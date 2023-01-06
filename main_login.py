@@ -108,7 +108,6 @@ class Main_login_ui:
                 self.username = username
                 self.capacity = capacity_fromFile
                 self.login_status = True
-                self.ui.close()
             else:
                 self.login_status = False
                 QMessageBox.critical(self.ui, '错误', '登录失败')
@@ -133,7 +132,6 @@ class Main_login_ui:
         self.ui.Login_btn.setEnabled(True)
         self.msgBox.button(QMessageBox.Ok).animateClick()
         self.login_status = True
-        self.ui.close()
 
     def fail_login(self):
         """
