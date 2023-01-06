@@ -24,8 +24,6 @@ class Main_login_ui:
         """
         # 动态加载界面
         self.ui = uic.loadUi("UI/main_login.ui")
-        self.ui.Login_btn.clicked.connect(self.login)
-        self.ui.passwd.returnPressed.connect(self.login)
 
         # 其他属性
         self.login_status = False
@@ -35,6 +33,8 @@ class Main_login_ui:
         self.msgBox = QMessageBox(parent=self.ui)
 
         # 信号与槽连接
+        self.ui.Login_btn.clicked.connect(self.login)
+        self.ui.passwd.returnPressed.connect(self.login)
         self.mySignals.inform_signal.connect(self.inform)
         self.mySignals.login_success_signal.connect(self.success_login)
         self.mySignals.login_fail_signal.connect(self.fail_login)
@@ -69,9 +69,15 @@ class Main_login_ui:
         """
 
         def inform_thread():
+            """
+            登录提示线程
+            """
             self.mySignals.inform_signal.emit()
 
         def login_check_thread():
+            """
+            登录检查线程
+            """
             teraCloud = TeraCloud(username, password)
             flag, message = teraCloud.get_browser_source()
             if flag:
@@ -94,16 +100,18 @@ class Main_login_ui:
 
         # 判断文件是否存在
         if not os.path.exists('Account/main.txt'):
-            self.ui.Login_btn.setEnabled(False)
+            self.ui.Login_btn.setEnabled(False)  # 禁用登录按钮
             thread1 = Thread(target=inform_thread)
             thread2 = Thread(target=login_check_thread)
             thread1.start()
             thread2.start()
         else:
+            # 将用户名、密码的哈希值、容量写入文件
             with open('Account/main.txt', 'r') as f:
                 username_fromFile = f.readline().strip()
                 password_hash = f.readline().strip()
                 capacity_fromFile = f.readline().strip()
+            # 验证账号和密码的哈希值
             if username_fromFile == username and password_hash == hashlib.md5(password.encode('utf-8')).hexdigest():
                 self.username = username
                 self.capacity = capacity_fromFile
@@ -129,7 +137,7 @@ class Main_login_ui:
 
         :return: None
         """
-        self.ui.Login_btn.setEnabled(True)
+        self.ui.Login_btn.setEnabled(True)  # 启用登录按钮
         self.msgBox.button(QMessageBox.Ok).animateClick()
         self.login_status = True
 
@@ -139,7 +147,7 @@ class Main_login_ui:
 
         :return: None
         """
-        self.ui.Login_btn.setEnabled(True)
+        self.ui.Login_btn.setEnabled(True)  # 启用登录按钮
         self.msgBox.button(QMessageBox.Ok).animateClick()
         self.login_status = False
         QMessageBox.critical(self.ui, '错误', '登录失败')
