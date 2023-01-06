@@ -6,6 +6,7 @@ __author__ = "Maylon"
 import hashlib
 import os
 import sys
+import datetime
 from threading import Thread
 
 from PyQt5 import uic
@@ -29,6 +30,7 @@ class Main_login_ui:
         self.login_status = False
         self.username = None
         self.capacity = None
+        self.last_sync_time = None
         self.mySignals = MySignals()
         self.msgBox = QMessageBox(parent=self.ui)
 
@@ -85,13 +87,15 @@ class Main_login_ui:
                 if flag:
                     self.username = username
                     self.capacity = capacity
+                    self.last_sync_time = datetime.datetime.now().strftime('%Y-%m-%d')
                     # 写入文件
                     if not os.path.exists("Account"):
                         os.mkdir("Account")
-                    with open('Account/main.txt', 'w') as f:
-                        f.write(username + '\n')
-                        f.write(hashlib.md5(password.encode('utf-8')).hexdigest() + '\n')
-                        f.write(capacity)
+                    with open('Account/main.txt', 'w') as file:
+                        file.write(username + '\n')
+                        file.write(hashlib.md5(password.encode('utf-8')).hexdigest() + '\n')
+                        file.write(capacity + '\n')
+                        file.write(datetime.datetime.now().strftime('%Y-%m-%d'))
                     self.mySignals.login_success_signal.emit()
                 else:
                     self.mySignals.login_fail_signal.emit()
@@ -111,10 +115,12 @@ class Main_login_ui:
                 username_fromFile = f.readline().strip()
                 password_hash = f.readline().strip()
                 capacity_fromFile = f.readline().strip()
+                last_sync_time = f.readline().strip()
             # 验证账号和密码的哈希值
             if username_fromFile == username and password_hash == hashlib.md5(password.encode('utf-8')).hexdigest():
                 self.username = username
                 self.capacity = capacity_fromFile
+                self.last_sync_time = last_sync_time
                 self.login_status = True
             else:
                 self.login_status = False
