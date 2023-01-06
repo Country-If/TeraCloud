@@ -12,6 +12,7 @@ from PyQt5 import uic
 from PyQt5.QtWidgets import QApplication, QMessageBox
 
 from TeraCloud import TeraCloud
+from Signal import MySignals
 
 
 class Main_login_ui:
@@ -30,6 +31,13 @@ class Main_login_ui:
         self.login_status = False
         self.username = None
         self.capacity = None
+        self.mySignals = MySignals()
+        self.msgBox = QMessageBox(parent=self.ui)
+
+        # 信号与槽连接
+        self.mySignals.inform_signal.connect(self.inform)
+        self.mySignals.login_success_signal.connect(self.success_login)
+        self.mySignals.login_fail_signal.connect(self.fail_login)
 
     def login(self):
         """
@@ -49,12 +57,7 @@ class Main_login_ui:
         elif ',' in username or ',' in password:
             QMessageBox.critical(self.ui, '错误', '含有非法字符')
         else:
-            if self.login_check(username, password):
-                self.login_status = True
-                self.ui.close()
-            else:
-                self.login_status = False
-                QMessageBox.critical(self.ui, '错误', '登录失败')
+            self.login_check(username, password)
 
     def login_check(self, username, password):
         """
@@ -64,9 +67,11 @@ class Main_login_ui:
         :param password: 密码
         :return: bool
         """
-        # 判断文件是否存在
-        if not os.path.exists('Account/main.txt'):
-            # TODO: add threading
+
+        def inform_thread():
+            self.mySignals.inform_signal.emit()
+
+        def login_check_thread():
             teraCloud = TeraCloud(username, password)
             flag, message = teraCloud.get_browser_source()
             if flag:
@@ -81,9 +86,19 @@ class Main_login_ui:
                         f.write(username + '\n')
                         f.write(hashlib.md5(password.encode('utf-8')).hexdigest() + '\n')
                         f.write(capacity)
-                    return True
+                    self.mySignals.login_success_signal.emit()
                 else:
-                    return False
+                    self.mySignals.login_fail_signal.emit()
+            else:
+                self.mySignals.login_fail_signal.emit()
+
+        # 判断文件是否存在
+        if not os.path.exists('Account/main.txt'):
+            self.ui.Login_btn.setEnabled(False)
+            thread1 = Thread(target=inform_thread)
+            thread2 = Thread(target=login_check_thread)
+            thread1.start()
+            thread2.start()
         else:
             with open('Account/main.txt', 'r') as f:
                 username_fromFile = f.readline().strip()
@@ -92,9 +107,44 @@ class Main_login_ui:
             if username_fromFile == username and password_hash == hashlib.md5(password.encode('utf-8')).hexdigest():
                 self.username = username
                 self.capacity = capacity_fromFile
-                return True
+                self.login_status = True
+                self.ui.close()
             else:
-                return False
+                self.login_status = False
+                QMessageBox.critical(self.ui, '错误', '登录失败')
+
+    def inform(self):
+        """
+        验证信息系提醒
+
+        :return: None
+        """
+        self.msgBox.setWindowTitle('提示')
+        self.msgBox.setStandardButtons(QMessageBox.Ok)
+        self.msgBox.setText('正在验证账号信息，请耐心等待...')
+        self.msgBox.exec()
+
+    def success_login(self):
+        """
+        登录成功
+
+        :return: None
+        """
+        self.ui.Login_btn.setEnabled(True)
+        self.msgBox.button(QMessageBox.Ok).animateClick()
+        self.login_status = True
+        self.ui.close()
+
+    def fail_login(self):
+        """
+        登录失败
+
+        :return: None
+        """
+        self.ui.Login_btn.setEnabled(True)
+        self.msgBox.button(QMessageBox.Ok).animateClick()
+        self.login_status = False
+        QMessageBox.critical(self.ui, '错误', '登录失败')
 
 
 if __name__ == '__main__':
