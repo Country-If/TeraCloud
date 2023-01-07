@@ -33,6 +33,8 @@ class Main:
         self.login_ui.ui.Login_btn.clicked.connect(self.login)
         self.login_ui.ui.passwd.returnPressed.connect(self.login)
         self.mySignals.login2main_signal.connect(self.login2main)
+        self.main_ui.ui.logout_btn.clicked.connect(self.logout)
+        self.mySignals.main2login_signal.connect(self.main2login)
 
     def login(self):
         """
@@ -62,6 +64,35 @@ class Main:
         self.login_ui.ui.close()
         self.main_ui.ui.show()
         self.main_ui.setup_ui(self.login_ui.username, self.login_ui.last_sync_time)
+
+    def logout(self):
+        """
+        注销登录
+
+        :return: None
+        """
+
+        def thread():
+            """
+            检测注销状态线程
+            """
+            while True:
+                if not self.main_ui.login_status:
+                    self.mySignals.main2login_signal.emit()
+                    break
+
+        t = Thread(target=thread)
+        t.start()
+
+    def main2login(self):
+        """
+        注销登录后，将主界面关闭，显示登录界面
+
+        :return: None
+        """
+        self.main_ui.ui.close()
+        self.login_ui.ui.show()
+        self.login_ui.ui.passwd.clear()
 
 
 def main():
