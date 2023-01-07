@@ -18,12 +18,6 @@ class Main:
         """
         实例化对象
         """
-        self.__setup_ui()
-
-    def __setup_ui(self):
-        """
-        设置界面
-        """
         # 类属性
         self.login_ui = Main_login_ui()
         self.main_ui = Main_ui()
