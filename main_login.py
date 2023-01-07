@@ -122,6 +122,12 @@ class Main_login_ui:
                 self.capacity = capacity_fromFile
                 self.last_sync_time = last_sync_time
                 self.login_status = True
+            elif username_fromFile != username:
+                self.ui.Login_btn.setEnabled(False)  # 禁用登录按钮
+                thread1 = Thread(target=inform_thread)
+                thread2 = Thread(target=login_check_thread)
+                thread1.start()
+                thread2.start()
             else:
                 self.login_status = False
                 QMessageBox.critical(self.ui, '错误', '登录失败')
