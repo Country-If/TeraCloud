@@ -98,7 +98,12 @@ class Main_login_ui:
                         file.write(username + '\n')
                         file.write(hashlib.md5(password.encode('utf-8')).hexdigest() + '\n')
                         file.write(capacity + '\n')
-                        file.write(datetime.datetime.now().strftime('%Y-%m-%d'))
+                        file.close()
+                    if not os.path.exists('Data'):
+                        os.mkdir('Data')
+                    with open('Data/last_sync_time.txt', 'w') as file:
+                        file.write(datetime.datetime.now().strftime('%Y-%m-%d') + '\n')
+                        file.close()
                     self.mySignals.login_success_signal.emit()
                 else:
                     self.mySignals.login_fail_signal.emit()
@@ -113,12 +118,15 @@ class Main_login_ui:
             thread1.start()
             thread2.start()
         else:
-            # 将用户名、密码的哈希值、容量写入文件
+            # 读取信息
             with open('Account/main.txt', 'r') as f:
                 username_fromFile = f.readline().strip()
                 password_hash = f.readline().strip()
                 capacity_fromFile = f.readline().strip()
+                f.close()
+            with open('Data/last_sync_time.txt', 'r') as f:
                 last_sync_time = f.readline().strip()
+                f.close()
             # 验证账号和密码的哈希值
             if username_fromFile == username and password_hash == hashlib.md5(password.encode('utf-8')).hexdigest():
                 self.username = username
