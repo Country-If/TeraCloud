@@ -6,7 +6,7 @@ __author__ = "Maylon"
 import sys
 
 from PyQt5 import uic
-from PyQt5.QtWidgets import QApplication
+from PyQt5.QtWidgets import QApplication, QTableWidgetItem
 
 
 class Main_ui:
@@ -28,9 +28,10 @@ class Main_ui:
     def update_status(self, status):
         self.login_status = status
 
-    def setup_ui(self, username, last_sync_time):
+    def setup_ui(self, username, capacity, last_sync_time):
         self.ui.main_account.setText(username)
         self.ui.last_sync.setText(last_sync_time)
+        self.add_row_information(username, capacity)        # TODO: 设置表头伸缩和行列号隐藏等，UI界面美化
 
     def logout(self):
         """
@@ -39,6 +40,11 @@ class Main_ui:
         :return: None
         """
         self.update_status(False)
+
+    def add_row_information(self, userId, capacity):
+        self.ui.tableWidget.insertRow(0)
+        self.ui.tableWidget.setItem(0, 0, QTableWidgetItem(userId))
+        self.ui.tableWidget.setItem(0, 1, QTableWidgetItem(capacity))
 
 
 if __name__ == '__main__':
