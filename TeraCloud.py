@@ -109,6 +109,7 @@ class TeraCloud:
         if len(res) == 0:
             return False, "Get capacity failed"
         else:
+            print("Success!")
             return True, res[0]
 
 
