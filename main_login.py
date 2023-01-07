@@ -42,6 +42,12 @@ class Main_login_ui:
         self.mySignals.login_fail_signal.connect(self.fail_login)
 
     def update_status(self, status):
+        """
+        更新登录状态
+
+        :param status: 登录状态
+        :return: None
+        """
         self.login_status = status
 
     def login(self):
