@@ -13,4 +13,3 @@ class MySignals(QObject):
     login_fail_signal = pyqtSignal()
 
     login2main_signal = pyqtSignal()
-    main2login_signal = pyqtSignal()

@@ -25,6 +25,9 @@ class Main_ui:
         # 信号与槽连接
         self.ui.logout_btn.clicked.connect(self.logout)
 
+    def update_status(self, status):
+        self.login_status = status
+
     def setup_ui(self, username, last_sync_time):
         self.ui.main_account.setText(username)
         self.ui.last_sync.setText(last_sync_time)
@@ -35,7 +38,7 @@ class Main_ui:
 
         :return: None
         """
-        self.login_status = False
+        self.update_status(False)
 
 
 if __name__ == '__main__':

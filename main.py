@@ -34,7 +34,6 @@ class Main:
         self.login_ui.ui.passwd.returnPressed.connect(self.login)
         self.mySignals.login2main_signal.connect(self.login2main)
         self.main_ui.ui.logout_btn.clicked.connect(self.logout)
-        self.mySignals.main2login_signal.connect(self.main2login)
 
     def login(self):
         """
@@ -72,17 +71,9 @@ class Main:
         :return: None
         """
 
-        def thread():
-            """
-            检测注销状态线程
-            """
-            while True:
-                if not self.main_ui.login_status:
-                    self.mySignals.main2login_signal.emit()
-                    break
-
-        t = Thread(target=thread)
-        t.start()
+        self.main_ui.logout()
+        self.login_ui.update_status(False)
+        self.main2login()
 
     def main2login(self):
         """

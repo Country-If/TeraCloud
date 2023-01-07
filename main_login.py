@@ -41,6 +41,9 @@ class Main_login_ui:
         self.mySignals.login_success_signal.connect(self.success_login)
         self.mySignals.login_fail_signal.connect(self.fail_login)
 
+    def update_status(self, status):
+        self.login_status = status
+
     def login(self):
         """
         登录
@@ -121,7 +124,7 @@ class Main_login_ui:
                 self.username = username
                 self.capacity = capacity_fromFile
                 self.last_sync_time = last_sync_time
-                self.login_status = True
+                self.update_status(True)
             elif username_fromFile != username:
                 self.ui.Login_btn.setEnabled(False)  # 禁用登录按钮
                 thread1 = Thread(target=inform_thread)
@@ -129,7 +132,7 @@ class Main_login_ui:
                 thread1.start()
                 thread2.start()
             else:
-                self.login_status = False
+                self.update_status(False)
                 QMessageBox.critical(self.ui, '错误', '登录失败')
 
     def inform(self):
@@ -151,7 +154,7 @@ class Main_login_ui:
         """
         self.ui.Login_btn.setEnabled(True)  # 启用登录按钮
         self.msgBox.button(QMessageBox.Ok).animateClick()
-        self.login_status = True
+        self.update_status(True)
 
     def fail_login(self):
         """
@@ -161,7 +164,7 @@ class Main_login_ui:
         """
         self.ui.Login_btn.setEnabled(True)  # 启用登录按钮
         self.msgBox.button(QMessageBox.Ok).animateClick()
-        self.login_status = False
+        self.update_status(False)
         QMessageBox.critical(self.ui, '错误', '登录失败')
 
 
