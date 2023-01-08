@@ -7,6 +7,7 @@ import sys
 
 from PyQt5 import uic
 from PyQt5.QtWidgets import QApplication, QTableWidgetItem, QHeaderView
+from PyQt5.QtCore import Qt
 
 
 class Main_ui:
@@ -68,8 +69,16 @@ class Main_ui:
         :return: None
         """
         self.ui.tableWidget.insertRow(0)
-        self.ui.tableWidget.setItem(0, 0, QTableWidgetItem(userId))
-        self.ui.tableWidget.setItem(0, 1, QTableWidgetItem(capacity))
+
+        userId_Item = QTableWidgetItem(userId)
+        userId_Item.setFlags(Qt.ItemIsEnabled)  # 设置单元格为只读
+        userId_Item.setTextAlignment(Qt.AlignCenter)  # 设置文本内容居中
+        self.ui.tableWidget.setItem(0, 0, userId_Item)
+
+        capacity_Item = QTableWidgetItem(capacity)
+        capacity_Item.setFlags(Qt.ItemIsEnabled)  # 设置单元格为只读
+        capacity_Item.setTextAlignment(Qt.AlignCenter)  # 设置文本内容居中
+        self.ui.tableWidget.setItem(0, 1, capacity_Item)
 
 
 if __name__ == '__main__':
