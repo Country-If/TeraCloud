@@ -59,6 +59,16 @@ class Main_ui:
         :return: None
         """
         self.update_status(False)
+        self.clearTable()
+
+    def clearTable(self):
+        """
+        清空表格
+
+        :return: None
+        """
+        self.ui.tableWidget.clearContents()
+        self.ui.tableWidget.setRowCount(0)
 
     def add_row_information(self, userId, capacity):
         """
