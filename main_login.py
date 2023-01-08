@@ -19,6 +19,9 @@ from Signal import MySignals
 class Main_login_ui:
     """main login UI"""
 
+    # TODO: add remember password function
+    # TODO: add auto load information from local file function
+
     def __init__(self):
         """
         实例化对象
