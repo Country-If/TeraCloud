@@ -6,7 +6,7 @@ __author__ = "Maylon"
 import sys
 
 from PyQt5 import uic
-from PyQt5.QtWidgets import QApplication, QTableWidgetItem
+from PyQt5.QtWidgets import QApplication, QTableWidgetItem, QHeaderView
 
 
 class Main_ui:
@@ -45,7 +45,11 @@ class Main_ui:
         """
         self.ui.main_account.setText(username)
         self.ui.last_sync.setText(last_sync_time)
-        self.add_row_information(username, capacity)  # TODO: 设置表头伸缩和行列号隐藏等，UI界面美化
+        # 设置表格头的伸缩模式，让表格铺满整个QTableWidget控件
+        self.ui.tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        # 隐藏表格的行列号
+        self.ui.tableWidget.verticalHeader().setHidden(True)
+        self.add_row_information(username, capacity)
 
     def logout(self):
         """
