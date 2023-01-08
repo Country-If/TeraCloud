@@ -51,6 +51,7 @@ class Main_ui:
         # 隐藏表格的行列号
         self.ui.tableWidget.verticalHeader().setHidden(True)
         self.add_row_information(username, capacity)
+        self.ui.sum_label.setText(capacity)
 
     def logout(self):
         """
