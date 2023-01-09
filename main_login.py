@@ -20,8 +20,6 @@ from TeraCloud import TeraCloud
 class Main_login_ui:
     """main login UI"""
 
-    # TODO: add auto load information from local file function
-
     def __init__(self):
         """
         实例化对象
@@ -46,6 +44,28 @@ class Main_login_ui:
         self.mySignals.login_success_signal.connect(self.success_login)
         self.mySignals.login_fail_signal.connect(self.fail_login)
         self.ui.checkBox.clicked.connect(self.checkBox_status_update)
+        self.ui.auto_login_btn.clicked.connect(self.auto_login)
+
+    def auto_login(self):
+        """
+        auto login: use last login information
+
+        :return: None
+        """
+        if not os.path.exists("Account/main.txt"):
+            QMessageBox.critical(self.ui, '错误', "未登录过，无法自动登录")
+        else:
+            # 读取信息
+            with open('Account/main.txt', 'r') as f:
+                self.username = f.readline().strip()
+                f.readline().strip()
+                self.capacity = f.readline().strip()
+                f.close()
+            with open('Data/last_sync_time.txt', 'r') as f:
+                self.last_sync_time = f.readline().strip()
+                f.close()
+
+            self.update_status(True)
 
     def checkBox_status_update(self):
         """
@@ -137,6 +157,7 @@ class Main_login_ui:
         # 判断文件是否存在
         if not os.path.exists('Account/main.txt'):
             self.ui.Login_btn.setEnabled(False)  # 禁用登录按钮
+            self.ui.auto_login_btn.setEnabled(False)  # 禁用登录按钮
             thread1 = Thread(target=inform_thread)
             thread2 = Thread(target=login_check_thread)
             thread1.start()
@@ -159,6 +180,7 @@ class Main_login_ui:
                 self.update_status(True)
             elif username_fromFile != username:
                 self.ui.Login_btn.setEnabled(False)  # 禁用登录按钮
+                self.ui.auto_login_btn.setEnabled(False)  # 禁用登录按钮
                 thread1 = Thread(target=inform_thread)
                 thread2 = Thread(target=login_check_thread)
                 thread1.start()
@@ -185,6 +207,7 @@ class Main_login_ui:
         :return: None
         """
         self.ui.Login_btn.setEnabled(True)  # 启用登录按钮
+        self.ui.auto_login_btn.setEnabled(True)  # 启用登录按钮
         self.msgBox.button(QMessageBox.Ok).animateClick()
         self.update_status(True)
 
@@ -195,6 +218,7 @@ class Main_login_ui:
         :return: None
         """
         self.ui.Login_btn.setEnabled(True)  # 启用登录按钮
+        self.ui.auto_login_btn.setEnabled(True)  # 启用登录按钮
         self.msgBox.button(QMessageBox.Ok).animateClick()
         self.update_status(False)
         QMessageBox.critical(self.ui, '错误', '登录失败')

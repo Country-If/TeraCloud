@@ -26,8 +26,18 @@ class Main:
         # 信号与槽连接
         self.login_ui.ui.Login_btn.clicked.connect(self.login)
         self.login_ui.ui.passwd.returnPressed.connect(self.login)
+        self.login_ui.ui.auto_login_btn.clicked.connect(self.auto_login)
         self.mySignals.login2main_signal.connect(self.login2main)
         self.main_ui.ui.logout_btn.clicked.connect(self.logout)
+
+    def auto_login(self):
+        """
+        auto login
+
+        :return: None
+        """
+        if self.login_ui.login_status:
+            self.login2main()
 
     def login(self):
         """
