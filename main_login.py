@@ -156,8 +156,7 @@ class Main_login_ui:
 
         # 判断文件是否存在
         if not os.path.exists('Account/main.txt'):
-            self.ui.Login_btn.setEnabled(False)  # 禁用登录按钮
-            self.ui.auto_login_btn.setEnabled(False)  # 禁用登录按钮
+            self.update_btn_status(False)  # 禁用按钮
             thread1 = Thread(target=inform_thread)
             thread2 = Thread(target=login_check_thread)
             thread1.start()
@@ -179,8 +178,7 @@ class Main_login_ui:
                 self.last_sync_time = last_sync_time
                 self.update_status(True)
             elif username_fromFile != username:
-                self.ui.Login_btn.setEnabled(False)  # 禁用登录按钮
-                self.ui.auto_login_btn.setEnabled(False)  # 禁用登录按钮
+                self.update_btn_status(False)  # 禁用按钮
                 thread1 = Thread(target=inform_thread)
                 thread2 = Thread(target=login_check_thread)
                 thread1.start()
@@ -206,8 +204,7 @@ class Main_login_ui:
 
         :return: None
         """
-        self.ui.Login_btn.setEnabled(True)  # 启用登录按钮
-        self.ui.auto_login_btn.setEnabled(True)  # 启用登录按钮
+        self.update_btn_status(True)  # 启用按钮
         self.msgBox.button(QMessageBox.Ok).animateClick()
         self.update_status(True)
 
@@ -217,11 +214,20 @@ class Main_login_ui:
 
         :return: None
         """
-        self.ui.Login_btn.setEnabled(True)  # 启用登录按钮
-        self.ui.auto_login_btn.setEnabled(True)  # 启用登录按钮
+        self.update_btn_status(True)  # 启用按钮
         self.msgBox.button(QMessageBox.Ok).animateClick()
         self.update_status(False)
         QMessageBox.critical(self.ui, '错误', '登录失败')
+
+    def update_btn_status(self, status):
+        """
+        update all buttons' status here
+
+        :param status: button status
+        :return: None
+        """
+        self.ui.Login_btn.setEnabled(status)
+        self.ui.auto_login_btn.setEnabled(status)
 
 
 if __name__ == '__main__':
