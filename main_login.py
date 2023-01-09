@@ -3,17 +3,18 @@
 
 __author__ = "Maylon"
 
+import datetime
 import hashlib
 import os
 import sys
-import datetime
 from threading import Thread
 
 from PyQt5 import uic
+from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QApplication, QMessageBox
 
-from TeraCloud import TeraCloud
 from Signal import MySignals
+from TeraCloud import TeraCloud
 
 
 class Main_login_ui:
@@ -28,6 +29,7 @@ class Main_login_ui:
         """
         # 动态加载界面
         self.ui = uic.loadUi("UI/main_login.ui")
+        self.ui.checkBox.setChecked(True)
 
         # 其他属性
         self.login_status = False
@@ -36,6 +38,7 @@ class Main_login_ui:
         self.last_sync_time = None
         self.mySignals = MySignals()
         self.msgBox = QMessageBox(parent=self.ui)
+        self.remember_password = True
 
         # 信号与槽连接
         self.ui.Login_btn.clicked.connect(self.login)
@@ -43,6 +46,19 @@ class Main_login_ui:
         self.mySignals.inform_signal.connect(self.inform)
         self.mySignals.login_success_signal.connect(self.success_login)
         self.mySignals.login_fail_signal.connect(self.fail_login)
+        self.ui.checkBox.clicked.connect(self.checkBox_status_update)
+
+    def checkBox_status_update(self):
+        """
+        update checkBox status when mouse clicked
+
+        :return: None
+        """
+        check_state = self.ui.checkBox.checkState()
+        if check_state == Qt.Checked:
+            self.remember_password = True
+        elif check_state == Qt.Unchecked:
+            self.remember_password = False
 
     def update_status(self, status):
         """
