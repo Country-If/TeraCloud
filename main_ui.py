@@ -4,10 +4,13 @@
 __author__ = "Maylon"
 
 import sys
+import os
 
 from PyQt5 import uic
 from PyQt5.QtWidgets import QApplication, QTableWidgetItem, QHeaderView
 from PyQt5.QtCore import Qt
+
+from subAccount_login import SubAccount_login_ui
 
 
 class Main_ui:
@@ -24,12 +27,25 @@ class Main_ui:
         """
         # 动态加载界面
         self.ui = uic.loadUi("UI/main_ui.ui")
+        self.sub_ui = SubAccount_login_ui()
 
         # 类属性
         self.login_status = True
 
         # 信号与槽连接
         self.ui.logout_btn.clicked.connect(self.logout)
+        self.ui.add_btn.clicked.connect(self.add_account)
+
+    def add_account(self):
+        """
+        add an account
+
+        :return: None
+        """
+        if not os.path.exists("Account/Main Account"):
+            os.mkdir("Account/Main Account")
+        else:
+            self.sub_ui.exec_()
 
     def update_status(self, status):
         """
