@@ -77,7 +77,8 @@ class Main:
         """
         self.main_ui.ui.close()
         self.login_ui.ui.show()
-        self.login_ui.ui.passwd.clear()  # TODO: change to remember password function
+        if not self.login_ui.remember_password:
+            self.login_ui.ui.passwd.clear()
 
 
 def main():
