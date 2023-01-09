@@ -13,6 +13,11 @@ from PyQt5.QtCore import Qt
 class Main_ui:
     """main UI"""
 
+    # TODO: add account
+    # TODO: del account
+    # TODO: del main account
+    # TODO: sync capacity
+
     def __init__(self):
         """
         实例化对象
