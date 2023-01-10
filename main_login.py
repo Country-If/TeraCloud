@@ -19,8 +19,6 @@ from DES import encrypt
 class Main_login_ui:
     """main login UI"""
 
-    # TODO: encryption choose DES
-
     def __init__(self):
         """
         实例化对象
