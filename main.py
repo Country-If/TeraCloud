@@ -54,6 +54,8 @@ class Main:
                 if self.login_ui.login_status:
                     self.mySignals.login2main_signal.emit()
                     break
+                else:
+                    break
 
         t = Thread(target=thread)
         t.start()
