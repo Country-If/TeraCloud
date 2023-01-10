@@ -3,7 +3,6 @@
 
 __author__ = "Maylon"
 
-import hashlib
 import sys
 from threading import Thread
 
@@ -14,10 +13,12 @@ from PyQt5.QtWidgets import QApplication, QMessageBox
 from Signal import MySignals
 from TeraCloud import TeraCloud
 from common import *
+from DES import encrypt
 
 
 class Main_login_ui:
     """main login UI"""
+
     # TODO: encryption choose DES
 
     def __init__(self):
@@ -141,7 +142,7 @@ class Main_login_ui:
                         os.mkdir("Account")
                     with open('Account/main.txt', 'w') as file:
                         file.write(username + '\n')
-                        file.write(hashlib.md5(password.encode('utf-8')).hexdigest() + '\n')
+                        file.write(str(encrypt(password, username)) + '\n')
                         file.write(capacity + '\n')
                         file.close()
                     self.mySignals.login_success_signal.emit()
@@ -168,7 +169,7 @@ class Main_login_ui:
                 last_sync_time = f.readline().strip()
                 f.close()
             # 验证账号和密码的哈希值
-            if username_fromFile == username and password_hash == hashlib.md5(password.encode('utf-8')).hexdigest():
+            if username_fromFile == username and password_hash == str(encrypt(password, username)):
                 self.username = username
                 self.capacity = capacity_fromFile
                 self.last_sync_time = last_sync_time
