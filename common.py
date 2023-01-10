@@ -18,3 +18,17 @@ def sync_time():
     with open("Data/last_sync_time.txt", 'w') as f:
         f.write(datetime.datetime.now().strftime('%Y-%m-%d') + '\n')
         f.close()
+
+
+def load_sync_time():
+    """
+    load sync time from file
+
+    :return: sync time
+    """
+    if not os.path.exists('Data/last_sync_time.txt'):
+        return None
+    with open('Data/last_sync_time.txt', 'r') as f:
+        load_time = f.readline()
+        f.close()
+    return load_time
