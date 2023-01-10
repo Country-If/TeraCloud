@@ -68,7 +68,7 @@ class Main:
         """
         self.login_ui.ui.close()
         self.main_ui.ui.show()
-        self.main_ui.setup_ui(self.login_ui.username, self.login_ui.capacity, self.login_ui.last_sync_time)
+        self.main_ui.setup_ui(self.login_ui.username, self.login_ui.capacity)
 
     def logout(self):
         """

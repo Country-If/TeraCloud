@@ -8,10 +8,11 @@ import os
 from threading import Thread
 
 from PyQt5 import uic
-from PyQt5.QtWidgets import QApplication, QTableWidgetItem, QHeaderView
+from PyQt5.QtWidgets import QApplication, QTableWidgetItem, QHeaderView, QMessageBox
 from PyQt5.QtCore import Qt
 
 from subAccount_login import SubAccount_login_ui
+from common import *
 
 
 class Main_ui:
@@ -59,18 +60,18 @@ class Main_ui:
         """
         self.login_status = status
 
-    def setup_ui(self, username, capacity, last_sync_time):
+    def setup_ui(self, username, capacity):
         """
         设置界面
 
         :param username: 用户名
         :param capacity: 容量
-        :param last_sync_time: 最后同步时间
         :return: None
         """
+
         self.username = username
         self.ui.main_account.setText(username)
-        self.ui.last_sync.setText(last_sync_time)  # TODO: del variable last_sync_time, add function: load it from file
+        self.sync_time()
         # 设置表格头的伸缩模式，让表格铺满整个QTableWidget控件
         self.ui.tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         # 隐藏表格的行列号
@@ -115,6 +116,18 @@ class Main_ui:
         capacity_Item.setFlags(Qt.ItemIsEnabled)  # 设置单元格为只读
         capacity_Item.setTextAlignment(Qt.AlignCenter)  # 设置文本内容居中
         self.ui.tableWidget.setItem(0, 1, capacity_Item)
+
+    def sync_time(self):
+        """
+        set sync time in UI
+
+        :return: None
+        """
+        sync_t = load_sync_time()
+        if sync_t is None:
+            QMessageBox.critical(self.ui, '错误', '无法加载last_sync_time文件')
+        else:
+            self.ui.last_sync.setText(sync_t)
 
 
 if __name__ == '__main__':
