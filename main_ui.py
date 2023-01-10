@@ -5,6 +5,7 @@ __author__ = "Maylon"
 
 import sys
 import os
+from threading import Thread
 
 from PyQt5 import uic
 from PyQt5.QtWidgets import QApplication, QTableWidgetItem, QHeaderView
@@ -27,10 +28,11 @@ class Main_ui:
         """
         # 动态加载界面
         self.ui = uic.loadUi("UI/main_ui.ui")
-        self.sub_ui = SubAccount_login_ui()
+        self.sub_ui = None
 
         # 类属性
         self.login_status = True
+        self.username = None
 
         # 信号与槽连接
         self.ui.logout_btn.clicked.connect(self.logout)
@@ -42,10 +44,11 @@ class Main_ui:
 
         :return: None
         """
-        if not os.path.exists("Account/Main Account"):
-            os.mkdir("Account/Main Account")
-        else:
-            self.sub_ui.exec_()
+        if not os.path.exists("Account/" + self.username):
+            os.mkdir("Account/" + self.username)
+        self.sub_ui = SubAccount_login_ui(self.username)
+        self.sub_ui.exec_()
+        # TODO: add thread to load tableWidget
 
     def update_status(self, status):
         """
@@ -65,8 +68,9 @@ class Main_ui:
         :param last_sync_time: 最后同步时间
         :return: None
         """
+        self.username = username
         self.ui.main_account.setText(username)
-        self.ui.last_sync.setText(last_sync_time)
+        self.ui.last_sync.setText(last_sync_time)  # TODO: del variable last_sync_time, add function: load it from file
         # 设置表格头的伸缩模式，让表格铺满整个QTableWidget控件
         self.ui.tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         # 隐藏表格的行列号
