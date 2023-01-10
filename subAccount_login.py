@@ -3,7 +3,6 @@
 
 __author__ = "Maylon"
 
-import hashlib
 from threading import Thread
 
 from PyQt5 import uic
@@ -12,6 +11,7 @@ from PyQt5.QtWidgets import QDialog, QMessageBox
 from Signal import MySignals
 from TeraCloud import TeraCloud
 from common import *
+from DES import encrypt
 
 
 class SubAccount_login_ui(QDialog):
@@ -88,7 +88,7 @@ class SubAccount_login_ui(QDialog):
                     sync_time()
                     # 写入文件
                     with open('Account/' + self.main_username + '/' + username + '.txt', 'w') as file:
-                        file.write(hashlib.md5(password.encode('utf-8')).hexdigest() + '\n')
+                        file.write(str(encrypt(password, username)) + '\n')
                         file.write(capacity + '\n')
                         file.close()
                     self.mySignals.login_success_signal.emit()
