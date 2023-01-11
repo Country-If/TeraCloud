@@ -4,6 +4,7 @@
 __author__ = "Maylon"
 
 import sys
+import re
 
 from PyQt5 import uic
 from PyQt5.QtCore import Qt
@@ -46,8 +47,8 @@ class Main_ui:
         :return: None
         """
         self.add_row_information(add_username, capacity)
+        self.update_sum_capacity(capacity)
         # self.sync_time()
-        # TODO: update sum capacity
 
     def add_account(self):
         """
@@ -127,6 +128,20 @@ class Main_ui:
         capacity_Item.setFlags(Qt.ItemIsEnabled)  # 设置单元格为只读
         capacity_Item.setTextAlignment(Qt.AlignCenter)  # 设置文本内容居中
         self.ui.tableWidget.setItem(insertRow, 1, capacity_Item)
+
+    def update_sum_capacity(self, new_capacity):
+        """
+        update sum capacity
+
+        :param new_capacity: new capacity
+        :return: None
+        """
+        old_capacity = self.ui.sum_label.text()
+        old_used = float(re.compile(r'.*(?=GB /)').findall(old_capacity)[0])
+        new_used = float(re.compile(r'.*(?=GB /)').findall(new_capacity)[0])
+        old_all = int(re.compile(r'(?<= / ).*(?=GB)').findall(old_capacity)[0])
+        new_all = int(re.compile(r'(?<= / ).*(?=GB)').findall(new_capacity)[0])
+        self.ui.sum_label.setText(str(old_used + new_used) + 'GB / ' + str(old_all + new_all) + 'GB')
 
     def sync_time(self):
         """
