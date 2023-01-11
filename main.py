@@ -4,7 +4,6 @@
 __author__ = "Maylon"
 
 import sys
-from threading import Thread
 
 from PyQt5.QtWidgets import QApplication
 
@@ -24,8 +23,7 @@ class Main:
         self.mySignals = MySignals()
 
         # 信号与槽连接
-        self.login_ui.ui.Login_btn.clicked.connect(self.login)
-        self.login_ui.ui.passwd.returnPressed.connect(self.login)
+        self.login_ui.mySignals.login2main_signal.connect(self.login2main)
         self.login_ui.ui.auto_login_btn.clicked.connect(self.auto_login)
         self.mySignals.login2main_signal.connect(self.login2main)
         self.main_ui.ui.logout_btn.clicked.connect(self.logout)
@@ -39,27 +37,6 @@ class Main:
         # TODO: update all widgets when auto login
         if self.login_ui.login_status:
             self.login2main()
-
-    def login(self):
-        """
-        登录
-
-        :return: None
-        """
-
-        def thread():
-            """
-            检测登录状态线程
-            """
-            while True:
-                if self.login_ui.login_status:
-                    self.mySignals.login2main_signal.emit()
-                    break
-                else:
-                    break
-
-        t = Thread(target=thread)
-        t.start()
 
     def login2main(self):
         """

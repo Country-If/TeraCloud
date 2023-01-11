@@ -172,6 +172,7 @@ class Main_login_ui:
                 self.capacity = capacity_fromFile
                 self.last_sync_time = last_sync_time
                 self.update_status(True)
+                self.mySignals.login2main_signal.emit()
             elif username_fromFile != username:
                 self.update_btn_status(False)  # 禁用按钮
                 thread1 = Thread(target=inform_thread)
@@ -202,6 +203,7 @@ class Main_login_ui:
         self.update_btn_status(True)  # 启用按钮
         self.msgBox.button(QMessageBox.Ok).animateClick()
         self.update_status(True)
+        self.mySignals.login2main_signal.emit()
 
     def fail_login(self):
         """
