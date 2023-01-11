@@ -19,7 +19,7 @@ pip3 install selenium
 
 - WebDriver
 
-  使用的是Chrome Driver，版本为 108.0.5359.71，路径设为[ChromeDriver/chromedriver.exe](ChromeDriver/chromedriver.exe)，可根据实际情况下载对应版本的Chrome Driver。
+  使用的是Chrome Driver，版本为 109.0.5414.75，路径设为[ChromeDriver/chromedriver.exe](ChromeDriver/chromedriver.exe)，可根据实际情况下载对应版本的Chrome Driver。
 
     - 查看chrome版本号
 
