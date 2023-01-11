@@ -56,8 +56,6 @@ class Main_ui:
 
         :return: None
         """
-        if not os.path.exists("Account/" + self.username):
-            os.mkdir("Account/" + self.username)
         sub_ui = SubAccount_login_ui(self.username)
         sub_ui.mySignals.subAccount_login_success.connect(self.sub_login)
         sub_ui.exec_()

@@ -171,6 +171,8 @@ class Main_login_ui:
                 self.last_sync_time = last_sync_time
                 self.update_status(True)
                 self.mySignals.login2main_signal.emit()
+                if not os.path.exists("Account/" + self.username):
+                    os.mkdir("Account/" + self.username)
             elif username_fromFile != username:
                 self.update_btn_status(False)  # 禁用按钮
                 thread1 = Thread(target=inform_thread)
@@ -202,6 +204,8 @@ class Main_login_ui:
         self.msgBox.button(QMessageBox.Ok).animateClick()
         self.update_status(True)
         self.mySignals.login2main_signal.emit()
+        if not os.path.exists("Account/" + self.username):
+            os.mkdir("Account/" + self.username)
 
     def fail_login(self):
         """
