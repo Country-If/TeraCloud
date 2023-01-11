@@ -7,7 +7,7 @@ import os
 import datetime
 
 
-def sync_time():
+def write_sync_time():
     """
     write the current time into file
 

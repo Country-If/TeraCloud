@@ -85,7 +85,7 @@ class SubAccount_login_ui(QDialog):
             if flag:
                 flag, capacity = teraCloud.get_capacity()
                 if flag:
-                    sync_time()
+                    write_sync_time()
                     # 写入文件
                     with open('Account/' + self.main_username + '/' + username + '.txt', 'w') as file:
                         file.write(username + '\n')

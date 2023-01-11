@@ -132,7 +132,7 @@ class Main_login_ui:
                     self.username = username
                     self.capacity = capacity
                     self.last_sync_time = datetime.datetime.now().strftime('%Y-%m-%d')
-                    sync_time()
+                    write_sync_time()
                     # 写入文件
                     if not os.path.exists("Account"):
                         os.mkdir("Account")
