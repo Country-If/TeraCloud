@@ -18,7 +18,6 @@ from subAccount_login import SubAccount_login_ui
 class Main_ui:
     """main UI"""
 
-    # TODO: add account
     # TODO: del account
     # TODO: del main account
     # TODO: sync capacity
