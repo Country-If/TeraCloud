@@ -36,6 +36,7 @@ class Main:
 
         :return: None
         """
+        # TODO: update all widgets when auto login
         if self.login_ui.login_status:
             self.login2main()
 
