@@ -60,9 +60,7 @@ class Main_login_ui:
                 f.readline().strip()
                 self.capacity = f.readline().strip()
                 f.close()
-            with open('Data/last_sync_time.txt', 'r') as f:
-                self.last_sync_time = f.readline().strip()
-                f.close()
+            self.last_sync_time = load_sync_time()
 
             self.update_status(True)
 
