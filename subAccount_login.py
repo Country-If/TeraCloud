@@ -30,7 +30,8 @@ class SubAccount_login_ui(QDialog):
         self.mySignals = MySignals()
         self.main_username = main_username
         self.add_username = None
-        self.login_status = "Waiting"
+        self.login_status = False
+        self.capacity = None
 
         # 信号与槽连接
         self.Login_btn.clicked.connect(self.login)
@@ -91,6 +92,7 @@ class SubAccount_login_ui(QDialog):
                         file.write(str(encrypt(password, username)) + '\n')
                         file.write(capacity + '\n')
                         file.close()
+                    self.capacity = capacity
                     self.mySignals.login_success_signal.emit()
                 else:
                     self.mySignals.login_fail_signal.emit()
@@ -124,7 +126,7 @@ class SubAccount_login_ui(QDialog):
         :return: None
         """
         self.Login_btn.setEnabled(True)  # 启用按钮
-        self.login_status = "Success"
+        self.login_status = True
         self.msgBox.button(QMessageBox.Ok).animateClick()
         QMessageBox.information(self, '提示', self.add_username + ' 登录成功')
         self.accept()
@@ -136,6 +138,6 @@ class SubAccount_login_ui(QDialog):
         :return: None
         """
         self.Login_btn.setEnabled(True)  # 启用按钮
-        self.login_status = "Fail"
+        self.login_status = False
         self.msgBox.button(QMessageBox.Ok).animateClick()
         QMessageBox.critical(self, '错误', self.add_username + ' 登录失败')
