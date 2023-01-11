@@ -47,7 +47,8 @@ class Main_ui:
         """
         self.add_row_information(add_username, capacity)
         self.update_sum_capacity(capacity)
-        # self.sync_time()
+        write_sync_time()
+        self.sync_time()
 
     def add_account(self):
         """
