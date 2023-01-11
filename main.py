@@ -4,6 +4,7 @@
 __author__ = "Maylon"
 
 import sys
+import os
 
 from PyQt5.QtWidgets import QApplication
 
@@ -37,6 +38,23 @@ class Main:
         # TODO: update all widgets when auto login
         if self.login_ui.login_status:
             self.login2main()
+            self.update_tableWidgets()
+
+    def update_tableWidgets(self):
+        """
+        update tableWidgets when auto login
+
+        :return: None
+        """
+        if os.path.exists("Account/" + self.login_ui.username):
+            file_list = os.listdir("Account/" + self.login_ui.username)
+            for file in file_list:
+                with open("Account/" + self.login_ui.username + '/' + file, 'r') as f:
+                    username = f.readline().strip()
+                    f.readline().strip()
+                    capacity = f.readline().strip()
+                    self.main_ui.add_row_information(username, capacity)
+                    self.main_ui.update_sum_capacity(capacity)
 
     def login2main(self):
         """

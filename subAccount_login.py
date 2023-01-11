@@ -88,6 +88,7 @@ class SubAccount_login_ui(QDialog):
                     sync_time()
                     # 写入文件
                     with open('Account/' + self.main_username + '/' + username + '.txt', 'w') as file:
+                        file.write(username + '\n')
                         file.write(str(encrypt(password, username)) + '\n')
                         file.write(capacity + '\n')
                         file.close()
