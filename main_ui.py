@@ -119,23 +119,24 @@ class Main_ui:
 
     def add_row_information(self, userId, capacity):
         """
-        添加行信息
+        insert a row information from the end
 
         :param userId: 用户名
         :param capacity: 容量
         :return: None
         """
-        self.ui.tableWidget.insertRow(0)
+        insertRow = self.ui.tableWidget.rowCount()
+        self.ui.tableWidget.insertRow(insertRow)
 
         userId_Item = QTableWidgetItem(userId)
         userId_Item.setFlags(Qt.ItemIsEnabled)  # 设置单元格为只读
         userId_Item.setTextAlignment(Qt.AlignCenter)  # 设置文本内容居中
-        self.ui.tableWidget.setItem(0, 0, userId_Item)
+        self.ui.tableWidget.setItem(insertRow, 0, userId_Item)
 
         capacity_Item = QTableWidgetItem(capacity)
         capacity_Item.setFlags(Qt.ItemIsEnabled)  # 设置单元格为只读
         capacity_Item.setTextAlignment(Qt.AlignCenter)  # 设置文本内容居中
-        self.ui.tableWidget.setItem(0, 1, capacity_Item)
+        self.ui.tableWidget.setItem(insertRow, 1, capacity_Item)
 
     def sync_time(self):
         """
