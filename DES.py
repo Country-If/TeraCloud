@@ -373,3 +373,5 @@ if __name__ == '__main__':
     decrypt_result = decrypt(encrypt_result, input_key)
     print("decrypt result: ")
     print(decrypt_result)
+    for de_bit in decrypt_result:
+        print(bit2string(de_bit).strip('\x00'))
