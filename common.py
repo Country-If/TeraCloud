@@ -29,6 +29,6 @@ def load_sync_time():
     if not os.path.exists('Data/last_sync_time.txt'):
         return None
     with open('Data/last_sync_time.txt', 'r') as f:
-        load_time = f.readline()
+        load_time = f.readline().strip()
         f.close()
     return load_time
