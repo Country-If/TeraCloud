@@ -35,10 +35,10 @@ class Main:
 
         :return: None
         """
-        # TODO: update all widgets when auto login
         if self.login_ui.login_status:
             self.login2main()
             self.update_tableWidgets()
+            self.main_ui.sync_time()
 
     def update_tableWidgets(self):
         """
