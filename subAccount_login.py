@@ -8,10 +8,10 @@ from threading import Thread
 from PyQt5 import uic
 from PyQt5.QtWidgets import QDialog, QMessageBox
 
+from DES import encrypt
 from Signal import MySignals
 from TeraCloud import TeraCloud
 from common import *
-from DES import encrypt
 
 
 class SubAccount_login_ui(QDialog):
@@ -129,6 +129,7 @@ class SubAccount_login_ui(QDialog):
         self.login_status = True
         self.msgBox.button(QMessageBox.Ok).animateClick()
         QMessageBox.information(self, '提示', self.add_username + ' 登录成功')
+        self.mySignals.subAccount_login_success.emit(self.add_username, self.capacity)
         self.accept()
 
     def fail_login(self):

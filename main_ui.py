@@ -4,7 +4,6 @@
 __author__ = "Maylon"
 
 import sys
-from threading import Thread
 
 from PyQt5 import uic
 from PyQt5.QtCore import Qt
@@ -29,7 +28,6 @@ class Main_ui:
         """
         # 动态加载界面
         self.ui = uic.loadUi("UI/main_ui.ui")
-        self.sub_ui = None
 
         # 类属性
         self.login_status = True
@@ -41,13 +39,13 @@ class Main_ui:
         self.ui.add_btn.clicked.connect(self.add_account)
         self.mySignals.login_success_signal.connect(self.sub_login)
 
-    def sub_login(self):
+    def sub_login(self, add_username, capacity):
         """
         update UI when subAccount successfully login
 
         :return: None
         """
-        self.add_row_information(self.sub_ui.add_username, self.sub_ui.capacity)
+        self.add_row_information(add_username, capacity)
         # self.sync_time()
         # TODO: update sum capacity
 
@@ -59,22 +57,9 @@ class Main_ui:
         """
         if not os.path.exists("Account/" + self.username):
             os.mkdir("Account/" + self.username)
-        self.sub_ui = SubAccount_login_ui(self.username)
-        self.sub_ui.exec_()
-
-        def sub_login_thread():
-            """
-            subAccount login status check thread
-            """
-            while not self.sub_ui.login_status:
-                if self.sub_ui.login_status:
-                    self.mySignals.login_success_signal.emit()
-                    break
-                else:
-                    continue
-
-        thread = Thread(target=sub_login_thread)
-        thread.start()
+        sub_ui = SubAccount_login_ui(self.username)
+        sub_ui.mySignals.subAccount_login_success.connect(self.sub_login)
+        sub_ui.exec_()
 
     def update_status(self, status):
         """
