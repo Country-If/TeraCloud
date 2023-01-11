@@ -63,10 +63,15 @@ class Main_ui:
         self.sub_ui.exec_()
 
         def sub_login_thread():
+            """
+            subAccount login status check thread
+            """
             while not self.sub_ui.login_status:
                 if self.sub_ui.login_status:
                     self.mySignals.login_success_signal.emit()
                     break
+                else:
+                    continue
 
         thread = Thread(target=sub_login_thread)
         thread.start()
