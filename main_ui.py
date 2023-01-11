@@ -4,15 +4,15 @@
 __author__ = "Maylon"
 
 import sys
-import os
 from threading import Thread
 
 from PyQt5 import uic
-from PyQt5.QtWidgets import QApplication, QTableWidgetItem, QHeaderView, QMessageBox
 from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QApplication, QTableWidgetItem, QHeaderView, QMessageBox
 
-from subAccount_login import SubAccount_login_ui
+from Signal import MySignals
 from common import *
+from subAccount_login import SubAccount_login_ui
 
 
 class Main_ui:
@@ -34,10 +34,22 @@ class Main_ui:
         # 类属性
         self.login_status = True
         self.username = None
+        self.mySignals = MySignals()
 
         # 信号与槽连接
         self.ui.logout_btn.clicked.connect(self.logout)
         self.ui.add_btn.clicked.connect(self.add_account)
+        self.mySignals.login_success_signal.connect(self.sub_login)
+
+    def sub_login(self):
+        """
+        update UI when subAccount successfully login
+
+        :return: None
+        """
+        self.add_row_information(self.sub_ui.add_username, self.sub_ui.capacity)
+        # self.sync_time()
+        # TODO: update sum capacity
 
     def add_account(self):
         """
@@ -49,7 +61,15 @@ class Main_ui:
             os.mkdir("Account/" + self.username)
         self.sub_ui = SubAccount_login_ui(self.username)
         self.sub_ui.exec_()
-        # TODO: add thread to load tableWidget
+
+        def sub_login_thread():
+            while not self.sub_ui.login_status:
+                if self.sub_ui.login_status:
+                    self.mySignals.login_success_signal.emit()
+                    break
+
+        thread = Thread(target=sub_login_thread)
+        thread.start()
 
     def update_status(self, status):
         """
