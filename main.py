@@ -3,8 +3,8 @@
 
 __author__ = "Maylon"
 
-import sys
 import os
+import sys
 
 from PyQt5.QtWidgets import QApplication
 

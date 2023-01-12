@@ -3,8 +3,9 @@
 
 __author__ = "Maylon"
 
-import os
 import datetime
+import os
+
 from DES import decrypt, bit2string
 
 

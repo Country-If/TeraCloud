@@ -3,8 +3,8 @@
 
 __author__ = "Maylon"
 
-import sys
 import re
+import sys
 from threading import Thread
 
 from PyQt5 import uic
@@ -12,9 +12,9 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QApplication, QTableWidgetItem, QHeaderView, QMessageBox
 
 from Signal import MySignals
+from TeraCloud import TeraCloud
 from common import *
 from subAccount_login import SubAccount_login_ui
-from TeraCloud import TeraCloud
 
 
 class Main_ui:

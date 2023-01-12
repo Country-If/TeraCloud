@@ -10,10 +10,10 @@ from PyQt5 import uic
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QApplication, QMessageBox
 
+from DES import encrypt
 from Signal import MySignals
 from TeraCloud import TeraCloud
 from common import *
-from DES import encrypt
 
 
 class Main_login_ui:
