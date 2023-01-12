@@ -89,7 +89,7 @@ class SubAccount_login_ui(QDialog):
                     # 写入文件
                     with open('Account/' + self.main_username + '/' + username + '.txt', 'w') as file:
                         file.write(username + '\n')
-                        file.write(str(encrypt(password, username)) + '\n')
+                        file.write(" ".join([str(i) for i in sum(encrypt(password, username), [])]) + '\n')
                         file.write(capacity + '\n')
                         file.close()
                     self.capacity = capacity

@@ -138,7 +138,7 @@ class Main_login_ui:
                         os.mkdir("Account")
                     with open('Account/main.txt', 'w') as file:
                         file.write(username + '\n')
-                        file.write(str(encrypt(password, username)) + '\n')
+                        file.write(" ".join([str(i) for i in sum(encrypt(password, username), [])]) + '\n')
                         file.write(capacity + '\n')
                         file.close()
                     self.mySignals.login_success_signal.emit()
@@ -158,14 +158,14 @@ class Main_login_ui:
             # 读取信息
             with open('Account/main.txt', 'r') as f:
                 username_fromFile = f.readline().strip()
-                password_hash = f.readline().strip()
+                password_encrypted = f.readline().strip()
                 capacity_fromFile = f.readline().strip()
                 f.close()
             with open('Data/last_sync_time.txt', 'r') as f:
                 last_sync_time = f.readline().strip()
                 f.close()
             # 验证账号和密码的哈希值
-            if username_fromFile == username and password_hash == str(encrypt(password, username)):
+            if username_fromFile == username and password_encrypted == " ".join([str(i) for i in sum(encrypt(password, username), [])]):
                 self.username = username
                 self.capacity = capacity_fromFile
                 self.last_sync_time = last_sync_time
