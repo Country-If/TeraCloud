@@ -52,6 +52,8 @@ class Main_ui:
         :param username: username
         :return: None
         """
+        self.reload_tableWidget_sumCapacity(username)
+        self.sync_time()
         QMessageBox.information(self.ui, '提示', username + '同步成功')
 
     def sync_fail(self, username):
@@ -62,6 +64,51 @@ class Main_ui:
         :return: None
         """
         QMessageBox.critical(self.ui, '错误', username + '同步失败')
+
+    def reload_tableWidget_sumCapacity(self, username):
+        """
+        reload tableWidget and sum capacity
+
+        :param username: username
+        :return: None
+        """
+        for i in range(self.ui.tableWidget.rowCount()):  # find the position of username
+            if self.ui.tableWidget.item(i, 0).text() == username:
+                if i == 0:
+                    filename = 'Account/main.txt'
+                else:
+                    filename = 'Account/' + self.username + '/' + username + '.txt'
+
+                with open(filename, 'r') as f:
+                    f.readline()
+                    f.readline()
+                    new_capacity = f.readline().strip()
+                    f.close()
+
+                self.update_sum_capacity(self.ui.tableWidget.item(i, 1).text(), new_capacity)
+                capacity_Item = QTableWidgetItem(new_capacity)
+                capacity_Item.setFlags(Qt.ItemIsEnabled)  # 设置单元格为只读
+                capacity_Item.setTextAlignment(Qt.AlignCenter)  # 设置文本内容居中
+                self.ui.tableWidget.setItem(i, 1, capacity_Item)
+
+    def update_sum_capacity(self, old, new):
+        """
+        update sum capacity
+
+        :param old: old capacity
+        :param new: new capacity
+        :return: None
+        """
+        original_capacity = self.ui.sum_label.text()
+        original_used = float(re.compile(r'.*(?=GB /)').findall(original_capacity)[0])
+        old_used = float(re.compile(r'.*(?=GB /)').findall(old)[0])
+        new_used = float(re.compile(r'.*(?=GB /)').findall(new)[0])
+        original_all = int(re.compile(r'(?<= / ).*(?=GB)').findall(original_capacity)[0])
+        old_all = int(re.compile(r'(?<= / ).*(?=GB)').findall(old)[0])
+        new_all = int(re.compile(r'(?<= / ).*(?=GB)').findall(new)[0])
+        self.ui.sum_label.setText(
+            str(original_used - old_used + new_used) + 'GB / ' + str(original_all - old_all + new_all) + 'GB'
+        )
 
     def sync_information(self):
         """
