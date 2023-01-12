@@ -5,6 +5,7 @@ __author__ = "Maylon"
 
 import os
 import datetime
+from DES import decrypt, bit2string
 
 
 def write_sync_time():
@@ -32,3 +33,22 @@ def load_sync_time():
         load_time = f.readline().strip()
         f.close()
     return load_time
+
+
+def get_password_plaintext(username, passwd):
+    """
+    get password plaintext from encrypted str
+
+    :param username: username
+    :param passwd: encrypted password (str)
+    :return: plaintext (str)
+    """
+    encrypt_list = []
+    plaintext = ""
+    tmp = passwd.split(' ')
+    for i in range(0, len(tmp), 64):
+        encrypt_list.append([int(bit) for bit in tmp[i:i + 64]])
+    decrypt_list = decrypt(encrypt_list, username)
+    for de in decrypt_list:
+        plaintext += bit2string(de).strip('\x00')
+    return plaintext
