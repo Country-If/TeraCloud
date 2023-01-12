@@ -15,3 +15,5 @@ class MySignals(QObject):
     login2main_signal = pyqtSignal()
 
     subAccount_login_success = pyqtSignal(str, str)
+
+    sync_success_signal = pyqtSignal()
