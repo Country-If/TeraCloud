@@ -23,6 +23,7 @@ class Main_ui:
     # TODO: del account
     # TODO: del main account
     # TODO: sync capacity
+    # TODO: disable buttons when sync
 
     def __init__(self):
         """
