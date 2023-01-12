@@ -57,7 +57,7 @@ class Main_login_ui:
             # 读取信息
             with open('Account/main.txt', 'r') as f:
                 self.username = f.readline().strip()
-                f.readline().strip()
+                f.readline()
                 self.capacity = f.readline().strip()
                 f.close()
             self.last_sync_time = load_sync_time()
