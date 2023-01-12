@@ -5,6 +5,7 @@ __author__ = "Maylon"
 
 import sys
 import re
+from threading import Thread
 
 from PyQt5 import uic
 from PyQt5.QtCore import Qt
@@ -13,6 +14,7 @@ from PyQt5.QtWidgets import QApplication, QTableWidgetItem, QHeaderView, QMessag
 from Signal import MySignals
 from common import *
 from subAccount_login import SubAccount_login_ui
+from TeraCloud import TeraCloud
 
 
 class Main_ui:
@@ -38,6 +40,51 @@ class Main_ui:
         self.ui.logout_btn.clicked.connect(self.logout)
         self.ui.add_btn.clicked.connect(self.add_account)
         self.mySignals.login_success_signal.connect(self.sub_login)
+        self.ui.sync_btn.clicked.connect(self.sync_information)
+
+    def sync_information(self):
+        """
+        sync all accounts' information
+
+        :return: None
+        """
+        userId_list = []
+        for i in range(self.ui.tableWidget.rowCount()):
+            userId_list.append(self.ui.tableWidget.item(i, 0).text())
+
+        def sync_thread(filename):
+            """
+            sync thread
+
+            :param filename: filename
+            """
+            with open(filename, 'r') as f:
+                username = f.readline().strip()
+                passwd = f.readline().strip()
+                password_plaintext = get_password_plaintext(username, passwd)
+                f.close()
+
+            teraCloud = TeraCloud(username, password_plaintext)
+            flag, message = teraCloud.get_browser_source()
+            if flag:
+                flag, capacity = teraCloud.get_capacity()
+                if flag:
+                    write_sync_time()
+                    # 写入文件
+                    with open(filename, 'w') as f:
+                        f.write(username + '\n')
+                        f.write(passwd + '\n')
+                        f.write(capacity + '\n')
+                        print(username, capacity)
+                        f.close()
+
+        for i in range(len(userId_list)):
+            if i == 0:
+                file = 'Account/main.txt'
+            else:
+                file = 'Account/' + self.username + '/' + userId_list[i] + '.txt'
+            thread = Thread(target=sync_thread, args=(file,))
+            thread.start()
 
     def sub_login(self, add_username, capacity):
         """
