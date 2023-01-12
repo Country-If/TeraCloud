@@ -115,7 +115,7 @@ class Main_ui:
         :return: None
         """
         self.add_row_information(add_username, capacity)
-        self.update_sum_capacity(capacity)
+        self.add_sum_capacity(capacity)
         write_sync_time()
         self.sync_time()
 
@@ -196,9 +196,9 @@ class Main_ui:
         capacity_Item.setTextAlignment(Qt.AlignCenter)  # 设置文本内容居中
         self.ui.tableWidget.setItem(insertRow, 1, capacity_Item)
 
-    def update_sum_capacity(self, new_capacity):
+    def add_sum_capacity(self, new_capacity):
         """
-        update sum capacity
+        add sum capacity
 
         :param new_capacity: new capacity
         :return: None
