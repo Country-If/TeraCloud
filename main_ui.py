@@ -48,9 +48,6 @@ class Main_ui:
 
         :return: None
         """
-        userId_list = []
-        for i in range(self.ui.tableWidget.rowCount()):
-            userId_list.append(self.ui.tableWidget.item(i, 0).text())
 
         def sync_thread(filename):
             """
@@ -75,14 +72,14 @@ class Main_ui:
                         f.write(username + '\n')
                         f.write(passwd + '\n')
                         f.write(capacity + '\n')
-                        print(username, capacity)
                         f.close()
+                        self.mySignals.sync_success_signal.emit()
 
-        for i in range(len(userId_list)):
+        for i in range(self.ui.tableWidget.rowCount()):
             if i == 0:
                 file = 'Account/main.txt'
             else:
-                file = 'Account/' + self.username + '/' + userId_list[i] + '.txt'
+                file = 'Account/' + self.username + '/' + self.ui.tableWidget.item(i, 0).text() + '.txt'
             thread = Thread(target=sync_thread, args=(file,))
             thread.start()
 
