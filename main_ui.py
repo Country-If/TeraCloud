@@ -41,6 +41,26 @@ class Main_ui:
         self.ui.add_btn.clicked.connect(self.add_account)
         self.mySignals.login_success_signal.connect(self.sub_login)
         self.ui.sync_btn.clicked.connect(self.sync_information)
+        self.mySignals.sync_success_signal.connect(self.sync_success)
+        self.mySignals.sync_fail_signal.connect(self.sync_fail)
+
+    def sync_success(self, username):
+        """
+        show sync success message
+
+        :param username: username
+        :return: None
+        """
+        QMessageBox.information(self.ui, '提示', username + '同步成功')
+
+    def sync_fail(self, username):
+        """
+        show sync fail message
+
+        :param username: username
+        :return: None
+        """
+        QMessageBox.critical(self.ui, '错误', username + '同步失败')
 
     def sync_information(self):
         """
@@ -73,7 +93,11 @@ class Main_ui:
                         f.write(passwd + '\n')
                         f.write(capacity + '\n')
                         f.close()
-                        self.mySignals.sync_success_signal.emit()
+                        self.mySignals.sync_success_signal.emit(username)
+                else:
+                    self.mySignals.sync_fail_signal.emit(username)
+            else:
+                self.mySignals.sync_fail_signal.emit(username)
 
         for i in range(self.ui.tableWidget.rowCount()):
             if i == 0:
