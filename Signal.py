@@ -18,3 +18,4 @@ class MySignals(QObject):
 
     sync_success_signal = pyqtSignal(str)
     sync_fail_signal = pyqtSignal(str)
+    time_out_signal = pyqtSignal()
