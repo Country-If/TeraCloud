@@ -10,6 +10,7 @@ from threading import Thread
 from PyQt5 import uic
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QApplication, QTableWidgetItem, QHeaderView, QMessageBox
+from func_timeout.exceptions import FunctionTimedOut
 
 from Signal import MySignals
 from TeraCloud import TeraCloud
@@ -45,6 +46,7 @@ class Main_ui:
         self.mySignals.sync_success_signal.connect(self.sync_success)
         self.mySignals.sync_fail_signal.connect(self.sync_fail)
         self.mySignals.inform_signal.connect(self.inform)
+        self.mySignals.sync_time_out_signal.connect(self.time_out)
 
     def sync_success(self, username):
         """
@@ -73,6 +75,19 @@ class Main_ui:
             self.update_btn_status(True)
             self.msgBox.button(QMessageBox.Ok).animateClick()
         QMessageBox.critical(self.ui, '错误', username + '同步失败')
+
+    def time_out(self, username):
+        """
+        show time out message
+
+        :param username: username
+        :return: None
+        """
+        self.sync_count -= 1
+        if self.sync_count == 0:
+            self.update_btn_status(True)
+            self.msgBox.button(QMessageBox.Ok).animateClick()
+        QMessageBox.critical(self.ui, '错误', username + '同步超时')
 
     def reload_tableWidget_sumCapacity(self, username):
         """
@@ -144,23 +159,26 @@ class Main_ui:
                 password_plaintext = get_password_plaintext(username, passwd)
                 f.close()
 
-            teraCloud = TeraCloud(username, password_plaintext)
-            flag, message = teraCloud.get_browser_source()
-            if flag:
-                flag, capacity = teraCloud.get_capacity()
+            try:
+                teraCloud = TeraCloud(username, password_plaintext)
+                flag, message = teraCloud.get_browser_source()
                 if flag:
-                    write_sync_time()
-                    # 写入文件
-                    with open(filename, 'w') as f:
-                        f.write(username + '\n')
-                        f.write(passwd + '\n')
-                        f.write(capacity + '\n')
-                        f.close()
-                        self.mySignals.sync_success_signal.emit(username)
+                    flag, capacity = teraCloud.get_capacity()
+                    if flag:
+                        write_sync_time()
+                        # 写入文件
+                        with open(filename, 'w') as f:
+                            f.write(username + '\n')
+                            f.write(passwd + '\n')
+                            f.write(capacity + '\n')
+                            f.close()
+                            self.mySignals.sync_success_signal.emit(username)
+                    else:
+                        self.mySignals.sync_fail_signal.emit(username)
                 else:
                     self.mySignals.sync_fail_signal.emit(username)
-            else:
-                self.mySignals.sync_fail_signal.emit(username)
+            except FunctionTimedOut:
+                self.mySignals.sync_time_out_signal.emit(username)
 
         self.sync_count = self.ui.tableWidget.rowCount()
         thread_inform = Thread(target=inform_thread)
