@@ -23,7 +23,7 @@ class Main_ui:
     # TODO: del account
     # TODO: del main account
     # TODO: sync capacity
-    # TODO: disable buttons when sync
+    # TODO: add inform thread
 
     def __init__(self):
         """
@@ -36,6 +36,7 @@ class Main_ui:
         self.login_status = True
         self.username = None
         self.mySignals = MySignals()
+        self.sync_count = None
 
         # 信号与槽连接
         self.ui.logout_btn.clicked.connect(self.logout)
@@ -52,6 +53,9 @@ class Main_ui:
         :param username: username
         :return: None
         """
+        self.sync_count -= 1
+        if self.sync_count == 0:
+            self.update_btn_status(True)
         self.reload_tableWidget_sumCapacity(username)
         self.sync_time()
         QMessageBox.information(self.ui, '提示', username + '同步成功')
@@ -63,6 +67,9 @@ class Main_ui:
         :param username: username
         :return: None
         """
+        self.sync_count -= 1
+        if self.sync_count == 0:
+            self.update_btn_status(True)
         QMessageBox.critical(self.ui, '错误', username + '同步失败')
 
     def reload_tableWidget_sumCapacity(self, username):
@@ -147,7 +154,9 @@ class Main_ui:
             else:
                 self.mySignals.sync_fail_signal.emit(username)
 
-        for i in range(self.ui.tableWidget.rowCount()):
+        self.sync_count = self.ui.tableWidget.rowCount()
+        self.update_btn_status(False)
+        for i in range(self.sync_count):
             if i == 0:
                 file = 'Account/main.txt'
             else:
@@ -268,6 +277,19 @@ class Main_ui:
             QMessageBox.critical(self.ui, '错误', '无法加载last_sync_time文件')
         else:
             self.ui.last_sync.setText(sync_t)
+
+    def update_btn_status(self, status):
+        """
+        update all buttons' status here
+
+        :param status: button status
+        :return: None
+        """
+        self.ui.del_main_btn.setEnabled(status)
+        self.ui.logout_btn.setEnabled(status)
+        self.ui.add_btn.setEnabled(status)
+        self.ui.del_one_btn.setEnabled(status)
+        self.ui.sync_btn.setEnabled(status)
 
 
 if __name__ == '__main__':
