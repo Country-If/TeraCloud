@@ -3,17 +3,17 @@
 
 __author__ = "Maylon"
 
-from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.chrome.service import Service
-from time import sleep
-import re
 import os
+import re
+from time import sleep
+
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.common.by import By
 
 
 class TeraCloud:
     def __init__(self, username, password, sleep_time=6, debug=False):
-        # TODO: add timeout function
         """
         TeraCloud类初始化
 
