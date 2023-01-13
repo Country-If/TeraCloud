@@ -7,6 +7,7 @@ from threading import Thread
 
 from PyQt5 import uic
 from PyQt5.QtWidgets import QDialog, QMessageBox
+from func_timeout.exceptions import FunctionTimedOut
 
 from DES import encrypt
 from Signal import MySignals
@@ -37,6 +38,7 @@ class SubAccount_login_ui(QDialog):
         self.mySignals.inform_signal.connect(self.inform)
         self.mySignals.login_success_signal.connect(self.success_login)
         self.mySignals.login_fail_signal.connect(self.fail_login)
+        self.mySignals.time_out_signal.connect(self.time_out)
 
     def login(self):
         """
@@ -80,24 +82,27 @@ class SubAccount_login_ui(QDialog):
             """
             login check thread
             """
-            teraCloud = TeraCloud(username, password)
-            flag, message = teraCloud.get_browser_source()
-            if flag:
-                flag, capacity = teraCloud.get_capacity()
+            try:
+                teraCloud = TeraCloud(username, password)
+                flag, message = teraCloud.get_browser_source()
                 if flag:
-                    write_sync_time()
-                    # 写入文件
-                    with open('Account/' + self.main_username + '/' + username + '.txt', 'w') as file:
-                        file.write(username + '\n')
-                        file.write(" ".join([str(i) for i in sum(encrypt(password, username), [])]) + '\n')
-                        file.write(capacity + '\n')
-                        file.close()
-                    self.capacity = capacity
-                    self.mySignals.login_success_signal.emit()
+                    flag, capacity = teraCloud.get_capacity()
+                    if flag:
+                        write_sync_time()
+                        # 写入文件
+                        with open('Account/' + self.main_username + '/' + username + '.txt', 'w') as file:
+                            file.write(username + '\n')
+                            file.write(" ".join([str(i) for i in sum(encrypt(password, username), [])]) + '\n')
+                            file.write(capacity + '\n')
+                            file.close()
+                        self.capacity = capacity
+                        self.mySignals.login_success_signal.emit()
+                    else:
+                        self.mySignals.login_fail_signal.emit()
                 else:
                     self.mySignals.login_fail_signal.emit()
-            else:
-                self.mySignals.login_fail_signal.emit()
+            except FunctionTimedOut:
+                self.mySignals.time_out_signal.emit()
 
         if os.path.exists('Account/' + self.main_username + '/' + username + '.txt'):
             QMessageBox.information(self, '提示', '该账号已存在')
@@ -140,3 +145,13 @@ class SubAccount_login_ui(QDialog):
         self.Login_btn.setEnabled(True)  # 启用按钮
         self.msgBox.button(QMessageBox.Ok).animateClick()
         QMessageBox.critical(self, '错误', self.add_username + ' 登录失败')
+
+    def time_out(self):
+        """
+        登录超时
+
+        :return: None
+        """
+        self.Login_btn.setEnabled(True)
+        self.msgBox.button(QMessageBox.Ok).animateClick()
+        QMessageBox.critical(self, '错误', '连接超时')

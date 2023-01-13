@@ -9,6 +9,7 @@ from threading import Thread
 from PyQt5 import uic
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QApplication, QMessageBox
+from func_timeout.exceptions import FunctionTimedOut
 
 from DES import encrypt
 from Signal import MySignals
@@ -44,6 +45,7 @@ class Main_login_ui:
         self.mySignals.login_fail_signal.connect(self.fail_login)
         self.ui.checkBox.clicked.connect(self.checkBox_status_update)
         self.ui.auto_login_btn.clicked.connect(self.auto_login)
+        self.mySignals.time_out_signal.connect(self.time_out)
 
     def auto_login(self):
         """
@@ -124,28 +126,31 @@ class Main_login_ui:
             """
             登录检查线程
             """
-            teraCloud = TeraCloud(username, password)
-            flag, message = teraCloud.get_browser_source()
-            if flag:
-                flag, capacity = teraCloud.get_capacity()
+            try:
+                teraCloud = TeraCloud(username, password)
+                flag, message = teraCloud.get_browser_source()
                 if flag:
-                    self.username = username
-                    self.capacity = capacity
-                    self.last_sync_time = datetime.datetime.now().strftime('%Y-%m-%d')
-                    write_sync_time()
-                    # 写入文件
-                    if not os.path.exists("Account"):
-                        os.mkdir("Account")
-                    with open('Account/main.txt', 'w') as file:
-                        file.write(username + '\n')
-                        file.write(" ".join([str(i) for i in sum(encrypt(password, username), [])]) + '\n')
-                        file.write(capacity + '\n')
-                        file.close()
-                    self.mySignals.login_success_signal.emit()
+                    flag, capacity = teraCloud.get_capacity()
+                    if flag:
+                        self.username = username
+                        self.capacity = capacity
+                        self.last_sync_time = datetime.datetime.now().strftime('%Y-%m-%d')
+                        write_sync_time()
+                        # 写入文件
+                        if not os.path.exists("Account"):
+                            os.mkdir("Account")
+                        with open('Account/main.txt', 'w') as file:
+                            file.write(username + '\n')
+                            file.write(" ".join([str(i) for i in sum(encrypt(password, username), [])]) + '\n')
+                            file.write(capacity + '\n')
+                            file.close()
+                        self.mySignals.login_success_signal.emit()
+                    else:
+                        self.mySignals.login_fail_signal.emit()
                 else:
                     self.mySignals.login_fail_signal.emit()
-            else:
-                self.mySignals.login_fail_signal.emit()
+            except FunctionTimedOut:
+                self.mySignals.time_out_signal.emit()
 
         # 判断文件是否存在
         if not os.path.exists('Account/main.txt'):
@@ -165,7 +170,8 @@ class Main_login_ui:
                 last_sync_time = f.readline().strip()
                 f.close()
             # 验证账号和密码的哈希值
-            if username_fromFile == username and password_encrypted == " ".join([str(i) for i in sum(encrypt(password, username), [])]):
+            if username_fromFile == username \
+                    and password_encrypted == " ".join([str(i) for i in sum(encrypt(password, username), [])]):
                 self.username = username
                 self.capacity = capacity_fromFile
                 self.last_sync_time = last_sync_time
@@ -217,6 +223,17 @@ class Main_login_ui:
         self.msgBox.button(QMessageBox.Ok).animateClick()
         self.update_status(False)
         QMessageBox.critical(self.ui, '错误', '登录失败')
+
+    def time_out(self):
+        """
+        登录超时
+
+        :return: None
+        """
+        self.update_btn_status(True)
+        self.msgBox.button(QMessageBox.Ok).animateClick()
+        self.update_status(False)
+        QMessageBox.critical(self.ui, '错误', '连接超时')
 
     def update_btn_status(self, status):
         """
