@@ -22,7 +22,6 @@ class Main_ui:
 
     # TODO: del account
     # TODO: del main account
-    # TODO: sync capacity
 
     def __init__(self):
         """
