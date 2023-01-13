@@ -7,9 +7,12 @@ import os
 import re
 from time import sleep
 
+from func_timeout import func_set_timeout
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
+
+timeout_seconds = 30
 
 
 class TeraCloud:
@@ -45,6 +48,7 @@ class TeraCloud:
                   """
         })
 
+    @func_set_timeout(timeout_seconds)
     def get_browser_source(self):
         """
         调用获取信息前必须先调用此函数，获取File Browser页面源码
