@@ -12,7 +12,7 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QApplication, QTableWidgetItem, QHeaderView, QMessageBox
 from func_timeout.exceptions import FunctionTimedOut
 
-from Signal import MySignals
+from Signal import MainUI_Signals as MySignals
 from TeraCloud import TeraCloud
 from common import *
 from subAccount_login import SubAccount_login_ui
@@ -41,11 +41,11 @@ class Main_ui:
         # 信号与槽连接
         self.ui.logout_btn.clicked.connect(self.logout)
         self.ui.add_btn.clicked.connect(self.add_account)
-        self.mySignals.login_success_signal.connect(self.sub_login)
         self.ui.sync_btn.clicked.connect(self.sync_information)
+        self.mySignals.inform_signal.connect(self.inform)
+        self.mySignals.login_success_signal.connect(self.sub_login)
         self.mySignals.sync_success_signal.connect(self.sync_success)
         self.mySignals.sync_fail_signal.connect(self.sync_fail)
-        self.mySignals.inform_signal.connect(self.inform)
         self.mySignals.sync_time_out_signal.connect(self.time_out)
 
     def sync_success(self, username):

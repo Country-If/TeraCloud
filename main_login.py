@@ -12,7 +12,7 @@ from PyQt5.QtWidgets import QApplication, QMessageBox
 from func_timeout.exceptions import FunctionTimedOut
 
 from DES import encrypt
-from Signal import MySignals
+from Signal import MainLoginSignals as MySignals
 from TeraCloud import TeraCloud
 from common import *
 
@@ -40,11 +40,11 @@ class Main_login_ui:
         # 信号与槽连接
         self.ui.Login_btn.clicked.connect(self.login)
         self.ui.passwd.returnPressed.connect(self.login)
+        self.ui.checkBox.clicked.connect(self.checkBox_status_update)
+        self.ui.auto_login_btn.clicked.connect(self.auto_login)
         self.mySignals.inform_signal.connect(self.inform)
         self.mySignals.login_success_signal.connect(self.success_login)
         self.mySignals.login_fail_signal.connect(self.fail_login)
-        self.ui.checkBox.clicked.connect(self.checkBox_status_update)
-        self.ui.auto_login_btn.clicked.connect(self.auto_login)
         self.mySignals.time_out_signal.connect(self.time_out)
 
     def auto_login(self):

@@ -8,7 +8,6 @@ import sys
 
 from PyQt5.QtWidgets import QApplication
 
-from Signal import MySignals
 from main_login import Main_login_ui
 from main_ui import Main_ui
 
@@ -19,14 +18,12 @@ class Main:
         实例化对象
         """
         # 类属性
-        self.login_ui = Main_login_ui()
+        self.main_login_ui = Main_login_ui()
         self.main_ui = Main_ui()
-        self.mySignals = MySignals()
 
         # 信号与槽连接
-        self.login_ui.mySignals.login2main_signal.connect(self.login2main)
-        self.login_ui.ui.auto_login_btn.clicked.connect(self.auto_login)
-        self.mySignals.login2main_signal.connect(self.login2main)
+        self.main_login_ui.mySignals.login2main_signal.connect(self.login2main)
+        self.main_login_ui.ui.auto_login_btn.clicked.connect(self.auto_login)
         self.main_ui.ui.logout_btn.clicked.connect(self.logout)
 
     def auto_login(self):
@@ -35,7 +32,7 @@ class Main:
 
         :return: None
         """
-        if self.login_ui.login_status:
+        if self.main_login_ui.login_status:
             self.login2main()
             self.main_ui.sync_time()
 
@@ -45,10 +42,10 @@ class Main:
 
         :return: None
         """
-        if os.path.exists("Account/" + self.login_ui.username):
-            file_list = os.listdir("Account/" + self.login_ui.username)
+        if os.path.exists("Account/" + self.main_login_ui.username):
+            file_list = os.listdir("Account/" + self.main_login_ui.username)
             for file in file_list:
-                with open("Account/" + self.login_ui.username + '/' + file, 'r') as f:
+                with open("Account/" + self.main_login_ui.username + '/' + file, 'r') as f:
                     username = f.readline().strip()
                     f.readline()
                     capacity = f.readline().strip()
@@ -61,9 +58,9 @@ class Main:
 
         :return: None
         """
-        self.login_ui.ui.close()
+        self.main_login_ui.ui.close()
         self.main_ui.ui.show()
-        self.main_ui.setup_ui(self.login_ui.username, self.login_ui.capacity)
+        self.main_ui.setup_ui(self.main_login_ui.username, self.main_login_ui.capacity)
         self.update_tableWidgets()
 
     def logout(self):
@@ -74,7 +71,7 @@ class Main:
         """
 
         self.main_ui.logout()
-        self.login_ui.update_status(False)
+        self.main_login_ui.update_status(False)
         self.main2login()
 
     def main2login(self):
@@ -84,9 +81,9 @@ class Main:
         :return: None
         """
         self.main_ui.ui.close()
-        self.login_ui.ui.show()
-        if not self.login_ui.remember_password:
-            self.login_ui.ui.passwd.clear()
+        self.main_login_ui.ui.show()
+        if not self.main_login_ui.remember_password:
+            self.main_login_ui.ui.passwd.clear()
 
 
 def main():
@@ -97,7 +94,7 @@ def main():
     """
     app = QApplication(sys.argv)
     window = Main()
-    window.login_ui.ui.show()
+    window.main_login_ui.ui.show()
     app.exec_()
 
 

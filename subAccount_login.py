@@ -10,7 +10,7 @@ from PyQt5.QtWidgets import QDialog, QMessageBox
 from func_timeout.exceptions import FunctionTimedOut
 
 from DES import encrypt
-from Signal import MySignals
+from Signal import SubAccountLoginSignals as MySignals
 from TeraCloud import TeraCloud
 from common import *
 
