@@ -23,7 +23,6 @@ class Main_ui:
     # TODO: del account
     # TODO: del main account
     # TODO: sync capacity
-    # TODO: add inform thread
 
     def __init__(self):
         """
@@ -37,6 +36,7 @@ class Main_ui:
         self.username = None
         self.mySignals = MySignals()
         self.sync_count = None
+        self.msgBox = QMessageBox(parent=self.ui)
 
         # 信号与槽连接
         self.ui.logout_btn.clicked.connect(self.logout)
@@ -45,6 +45,7 @@ class Main_ui:
         self.ui.sync_btn.clicked.connect(self.sync_information)
         self.mySignals.sync_success_signal.connect(self.sync_success)
         self.mySignals.sync_fail_signal.connect(self.sync_fail)
+        self.mySignals.inform_signal.connect(self.inform)
 
     def sync_success(self, username):
         """
@@ -56,6 +57,7 @@ class Main_ui:
         self.sync_count -= 1
         if self.sync_count == 0:
             self.update_btn_status(True)
+            self.msgBox.button(QMessageBox.Ok).animateClick()
         self.reload_tableWidget_sumCapacity(username)
         self.sync_time()
         QMessageBox.information(self.ui, '提示', username + '同步成功')
@@ -70,6 +72,7 @@ class Main_ui:
         self.sync_count -= 1
         if self.sync_count == 0:
             self.update_btn_status(True)
+            self.msgBox.button(QMessageBox.Ok).animateClick()
         QMessageBox.critical(self.ui, '错误', username + '同步失败')
 
     def reload_tableWidget_sumCapacity(self, username):
@@ -124,6 +127,12 @@ class Main_ui:
         :return: None
         """
 
+        def inform_thread():
+            """
+            inform thread
+            """
+            self.mySignals.inform_signal.emit()
+
         def sync_thread(filename):
             """
             sync thread
@@ -155,6 +164,8 @@ class Main_ui:
                 self.mySignals.sync_fail_signal.emit(username)
 
         self.sync_count = self.ui.tableWidget.rowCount()
+        thread_inform = Thread(target=inform_thread)
+        thread_inform.start()
         self.update_btn_status(False)
         for i in range(self.sync_count):
             if i == 0:
@@ -290,6 +301,17 @@ class Main_ui:
         self.ui.add_btn.setEnabled(status)
         self.ui.del_one_btn.setEnabled(status)
         self.ui.sync_btn.setEnabled(status)
+
+    def inform(self):
+        """
+        inform user that it's syncing
+
+        :return: None
+        """
+        self.msgBox.setWindowTitle('提示')
+        self.msgBox.setStandardButtons(QMessageBox.Ok)
+        self.msgBox.setText('正在同步，请耐心等待...')
+        self.msgBox.exec()
 
 
 if __name__ == '__main__':
