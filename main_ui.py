@@ -62,12 +62,23 @@ class Main_ui:
                         QMessageBox.critical(self.ui, '错误', '主账号不能删除')
                         return
                     else:
-                        self.add_del_sum_capacity(self.ui.tableWidget.item(i, 1).text(), '-')
-                        self.ui.tableWidget.removeRow(i)
-                        os.remove('Account/' + self.username + '/' + del_account + '.txt')
-                        QMessageBox.information(self.ui, '提示', del_account + '删除成功')
+                        self.del_account(i)
                         return
             QMessageBox.critical(self.ui, '错误', '未找到该用户')
+
+    def del_account(self, row):
+        """
+        delete account
+
+        :param row: row number
+        :return: None
+        """
+        del_username = self.ui.tableWidget.item(row, 0).text()
+        del_capacity = self.ui.tableWidget.item(row, 1).text()
+        self.add_del_sum_capacity(del_capacity, '-')
+        self.ui.tableWidget.removeRow(row)
+        os.remove('Account/' + self.username + '/' + del_username + '.txt')
+        QMessageBox.information(self.ui, '提示', del_username + '删除成功')
 
     def sync_success(self, username):
         """
