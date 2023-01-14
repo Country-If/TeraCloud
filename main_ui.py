@@ -21,8 +21,6 @@ from subAccount_login import SubAccount_login_ui
 class Main_ui:
     """main UI"""
 
-    # TODO: del main account
-
     def __init__(self):
         """
         实例化对象
@@ -42,11 +40,28 @@ class Main_ui:
         self.ui.add_btn.clicked.connect(self.add_account)
         self.ui.sync_btn.clicked.connect(self.sync_information)
         self.ui.del_one_btn.clicked.connect(self.del_one_account)
+        self.ui.del_main_btn.clicked.connect(self.del_main_account)
         self.mySignals.inform_signal.connect(self.inform)
         self.mySignals.login_success_signal.connect(self.sub_login)
         self.mySignals.sync_success_signal.connect(self.sync_success)
         self.mySignals.sync_fail_signal.connect(self.sync_fail)
         self.mySignals.sync_time_out_signal.connect(self.time_out)
+
+    def del_main_account(self):
+        """
+        delete main account
+
+        :return: None
+        """
+        reply = QMessageBox.question(self.ui, '注销主账号', '此操作将删除主账号及其子账号的所有信息，是否继续？',
+                                     QMessageBox.Yes | QMessageBox.No,
+                                     QMessageBox.No)
+        if reply == QMessageBox.Yes:
+            for i in range(1, self.ui.tableWidget.rowCount()):
+                del_username = self.ui.tableWidget.item(i, 0).text()
+                os.remove('Account/' + self.username + '/' + del_username + '.txt')
+            os.rmdir('Account/' + self.username)
+            os.remove('Account/main.txt')
 
     def del_one_account(self):
         """

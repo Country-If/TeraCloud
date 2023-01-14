@@ -25,6 +25,7 @@ class Main:
         self.main_login_ui.mySignals.login2main_signal.connect(self.login2main)
         self.main_login_ui.ui.auto_login_btn.clicked.connect(self.auto_login)
         self.main_ui.ui.logout_btn.clicked.connect(self.logout)
+        self.main_ui.ui.del_main_btn.clicked.connect(self.logout)
 
     def auto_login(self):
         """
