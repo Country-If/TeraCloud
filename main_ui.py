@@ -36,7 +36,6 @@ class Main_ui:
         self.msgBox = QMessageBox(parent=self.ui)
 
         # 信号与槽连接
-        self.ui.logout_btn.clicked.connect(self.logout)
         self.ui.add_btn.clicked.connect(self.add_account)
         self.ui.sync_btn.clicked.connect(self.sync_information)
         self.ui.del_one_btn.clicked.connect(self.del_one_account)
