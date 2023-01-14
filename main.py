@@ -50,7 +50,7 @@ class Main:
                     f.readline()
                     capacity = f.readline().strip()
                     self.main_ui.add_row_information(username, capacity)
-                    self.main_ui.add_sum_capacity(capacity)
+                    self.main_ui.add_del_sum_capacity(capacity, '+')
 
     def login2main(self):
         """

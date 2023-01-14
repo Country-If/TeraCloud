@@ -62,7 +62,7 @@ class Main_ui:
                         QMessageBox.critical(self.ui, '错误', '主账号不能删除')
                         return
                     else:
-                        self.del_sum_capacity(self.ui.tableWidget.item(i, 1).text())
+                        self.add_del_sum_capacity(self.ui.tableWidget.item(i, 1).text(), '-')
                         self.ui.tableWidget.removeRow(i)
                         os.remove('Account/' + self.username + '/' + del_account + '.txt')
                         QMessageBox.information(self.ui, '提示', del_account + '删除成功')
@@ -220,7 +220,7 @@ class Main_ui:
         :return: None
         """
         self.add_row_information(add_username, capacity)
-        self.add_sum_capacity(capacity)
+        self.add_del_sum_capacity(capacity, '+')
         write_sync_time()
         self.sync_time()
 
@@ -301,33 +301,23 @@ class Main_ui:
         capacity_Item.setTextAlignment(Qt.AlignCenter)  # 设置文本内容居中
         self.ui.tableWidget.setItem(insertRow, 1, capacity_Item)
 
-    def add_sum_capacity(self, new_capacity):
+    def add_del_sum_capacity(self, capacity, symbol):
         """
-        add sum capacity
+        add or del sum capacity
 
-        :param new_capacity: new capacity
+        :param capacity: capacity to be added or deleted
+        :param symbol: '+' or '-'
         :return: None
         """
         old_capacity = self.ui.sum_label.text()
         old_used = float(re.compile(r'.*(?=GB /)').findall(old_capacity)[0])
-        new_used = float(re.compile(r'.*(?=GB /)').findall(new_capacity)[0])
+        delta_used = float(re.compile(r'.*(?=GB /)').findall(capacity)[0])
         old_all = int(re.compile(r'(?<= / ).*(?=GB)').findall(old_capacity)[0])
-        new_all = int(re.compile(r'(?<= / ).*(?=GB)').findall(new_capacity)[0])
-        self.ui.sum_label.setText(str(old_used + new_used) + 'GB / ' + str(old_all + new_all) + 'GB')
-
-    def del_sum_capacity(self, del_capacity):
-        """
-        delete sum capacity
-
-        :param del_capacity: capacity to be deleted
-        :return: None
-        """
-        old_capacity = self.ui.sum_label.text()
-        old_used = float(re.compile(r'.*(?=GB /)').findall(old_capacity)[0])
-        del_used = float(re.compile(r'.*(?=GB /)').findall(del_capacity)[0])
-        old_all = int(re.compile(r'(?<= / ).*(?=GB)').findall(old_capacity)[0])
-        del_all = int(re.compile(r'(?<= / ).*(?=GB)').findall(del_capacity)[0])
-        self.ui.sum_label.setText(str(old_used - del_used) + 'GB / ' + str(old_all - del_all) + 'GB')
+        delta_all = int(re.compile(r'(?<= / ).*(?=GB)').findall(capacity)[0])
+        if symbol == '+':
+            self.ui.sum_label.setText(str(old_used + delta_used) + 'GB / ' + str(old_all + delta_all) + 'GB')
+        elif symbol == '-':
+            self.ui.sum_label.setText(str(old_used - delta_used) + 'GB / ' + str(old_all - delta_all) + 'GB')
 
     def sync_time(self):
         """
