@@ -9,7 +9,7 @@ from threading import Thread
 
 from PyQt5 import uic
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QApplication, QTableWidgetItem, QHeaderView, QMessageBox
+from PyQt5.QtWidgets import QApplication, QTableWidgetItem, QHeaderView, QMessageBox, QInputDialog, QLineEdit
 from func_timeout.exceptions import FunctionTimedOut
 
 from Signal import MainUI_Signals as MySignals
@@ -21,7 +21,6 @@ from subAccount_login import SubAccount_login_ui
 class Main_ui:
     """main UI"""
 
-    # TODO: del account
     # TODO: del main account
 
     def __init__(self):
@@ -42,11 +41,33 @@ class Main_ui:
         self.ui.logout_btn.clicked.connect(self.logout)
         self.ui.add_btn.clicked.connect(self.add_account)
         self.ui.sync_btn.clicked.connect(self.sync_information)
+        self.ui.del_one_btn.clicked.connect(self.del_one_account)
         self.mySignals.inform_signal.connect(self.inform)
         self.mySignals.login_success_signal.connect(self.sub_login)
         self.mySignals.sync_success_signal.connect(self.sync_success)
         self.mySignals.sync_fail_signal.connect(self.sync_fail)
         self.mySignals.sync_time_out_signal.connect(self.time_out)
+
+    def del_one_account(self):
+        """
+        delete one account
+
+        :return: None
+        """
+        del_account, okPressed = QInputDialog.getText(self.ui, '删除用户', '请输入待删除用户名', QLineEdit.Normal)
+        if okPressed:
+            for i in range(self.ui.tableWidget.rowCount()):
+                if self.ui.tableWidget.item(i, 0).text() == del_account:
+                    if i == 0:
+                        QMessageBox.critical(self.ui, '错误', '主账号不能删除')
+                        return
+                    else:
+                        self.del_sum_capacity(self.ui.tableWidget.item(i, 1).text())
+                        self.ui.tableWidget.removeRow(i)
+                        os.remove('Account/' + self.username + '/' + del_account + '.txt')
+                        QMessageBox.information(self.ui, '提示', del_account + '删除成功')
+                        return
+            QMessageBox.critical(self.ui, '错误', '未找到该用户')
 
     def sync_success(self, username):
         """
@@ -293,6 +314,20 @@ class Main_ui:
         old_all = int(re.compile(r'(?<= / ).*(?=GB)').findall(old_capacity)[0])
         new_all = int(re.compile(r'(?<= / ).*(?=GB)').findall(new_capacity)[0])
         self.ui.sum_label.setText(str(old_used + new_used) + 'GB / ' + str(old_all + new_all) + 'GB')
+
+    def del_sum_capacity(self, del_capacity):
+        """
+        delete sum capacity
+
+        :param del_capacity: capacity to be deleted
+        :return: None
+        """
+        old_capacity = self.ui.sum_label.text()
+        old_used = float(re.compile(r'.*(?=GB /)').findall(old_capacity)[0])
+        del_used = float(re.compile(r'.*(?=GB /)').findall(del_capacity)[0])
+        old_all = int(re.compile(r'(?<= / ).*(?=GB)').findall(old_capacity)[0])
+        del_all = int(re.compile(r'(?<= / ).*(?=GB)').findall(del_capacity)[0])
+        self.ui.sum_label.setText(str(old_used - del_used) + 'GB / ' + str(old_all - del_all) + 'GB')
 
     def sync_time(self):
         """
