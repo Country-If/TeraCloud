@@ -13,13 +13,15 @@
 
 - Selenium
 
-```
-pip3 install selenium
-```
+    ```
+    pip3 install selenium
+    ```
+
 
 - WebDriver
 
-  使用的是Chrome Driver，版本为 109.0.5414.75，路径设为[ChromeDriver/chromedriver.exe](ChromeDriver/chromedriver.exe)，可根据实际情况下载对应版本的Chrome Driver。
+  使用的是Chrome Driver，版本为 109.0.5414.75，路径设为[ChromeDriver/chromedriver.exe](ChromeDriver/chromedriver.exe)，
+  可根据实际情况下载对应版本的Chrome Driver。
 
     - 查看chrome版本号
 
@@ -27,6 +29,7 @@ pip3 install selenium
     - 下载对应版本的chrome driver
 
       [http://chromedriver.storage.googleapis.com/index.html](http://chromedriver.storage.googleapis.com/index.html)
+
 
 - PyQt5
 
@@ -37,3 +40,9 @@ pip3 install selenium
 
   see details: [PyQt5安装以及使用教程合集(2022)-知乎](https://zhuanlan.zhihu.com/p/162866700)
 
+
+- func_timeout
+
+  ```
+  pip3 install func_timeout
+  ```
