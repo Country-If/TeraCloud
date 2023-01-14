@@ -3,6 +3,7 @@
 
 __author__ = "Maylon"
 
+import os.path
 import sys
 from threading import Thread
 
@@ -27,6 +28,7 @@ class Main_login_ui:
         # 动态加载界面
         self.ui = uic.loadUi("UI/main_login.ui")
         self.ui.checkBox.setChecked(True)
+        self.__setup_ui()
 
         # 其他属性
         self.login_status = False
@@ -46,6 +48,17 @@ class Main_login_ui:
         self.mySignals.login_success_signal.connect(self.success_login)
         self.mySignals.login_fail_signal.connect(self.fail_login)
         self.mySignals.time_out_signal.connect(self.time_out)
+
+    def __setup_ui(self):
+        """
+        设置界面
+
+        :return: None
+        """
+        if os.path.exists("Account/main.txt"):
+            with open("Account/main.txt", 'r') as f:
+                self.ui.userid.setText(f.readline().strip())
+                f.close()
 
     def auto_login(self):
         """
