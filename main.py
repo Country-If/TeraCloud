@@ -11,10 +11,6 @@ from PyQt5.QtWidgets import QApplication
 from main_login import Main_login_ui
 from main_ui import Main_ui
 
-# TODO: update file structure
-# Note: source file D:\Software\anaconda3\envs\py3.8\Lib\site-packages\selenium\webdriver\common\service.py
-# refer: https://blog.csdn.net/ZDK_001/article/details/124431431
-
 
 class Main:
     def __init__(self):
