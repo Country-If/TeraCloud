@@ -46,3 +46,20 @@
   ```
   pip3 install func_timeout
   ```
+
+## Release
+
+- pyinstaller打包
+
+  ```
+  pip3 install pyinstaller    # 安装pyinstaller
+  pyinstaller -F -w main.py   # -F: 打包成单个exe文件，-w: 不显示cmd窗口
+  ```
+
+- ISSUES
+
+    - 打包后的exe启动时弹出chormedriver.exe窗口
+
+      解决方法：本人修改了service.py文件，路径为：`D:\Software\anaconda3\envs\py3.8\Lib\site-packages\selenium\webdriver\common\service.py`
+
+      参考：[解决python+selenuim运行时隐藏ChromeDriver窗口-CSDN](https://blog.csdn.net/ZDK_001/article/details/124431431)
