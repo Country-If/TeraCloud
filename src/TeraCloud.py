@@ -30,7 +30,7 @@ class TeraCloud:
         self.sleep = sleep_time
         self.browser_source = None
 
-        driver_path = "ChromeDriver/chromedriver.exe"
+        driver_path = "../ChromeDriver/chromedriver.exe"
         chrome_options = webdriver.ChromeOptions()
         if not debug:  # 不显示浏览器
             chrome_options.add_argument('--headless')

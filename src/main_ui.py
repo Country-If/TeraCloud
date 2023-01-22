@@ -26,7 +26,7 @@ class Main_ui:
         实例化对象
         """
         # 动态加载界面
-        self.ui = uic.loadUi("UI/main_ui.ui")
+        self.ui = uic.loadUi("../UI/main_ui.ui")
 
         # 类属性
         self.login_status = True
@@ -58,9 +58,9 @@ class Main_ui:
         if reply == QMessageBox.Yes:
             for i in range(1, self.ui.tableWidget.rowCount()):
                 del_username = self.ui.tableWidget.item(i, 0).text()
-                os.remove('Account/' + self.username + '/' + del_username + '.txt')
-            os.rmdir('Account/' + self.username)
-            os.remove('Account/main.txt')
+                os.remove('../Account/' + self.username + '/' + del_username + '.txt')
+            os.rmdir('../Account/' + self.username)
+            os.remove('../Account/main.txt')
 
     def del_one_account(self):
         """
@@ -91,7 +91,7 @@ class Main_ui:
         del_capacity = self.ui.tableWidget.item(row, 1).text()
         self.add_del_sum_capacity(del_capacity, '-')
         self.ui.tableWidget.removeRow(row)
-        os.remove('Account/' + self.username + '/' + del_username + '.txt')
+        os.remove('../Account/' + self.username + '/' + del_username + '.txt')
         QMessageBox.information(self.ui, '提示', del_username + '删除成功')
 
     def sync_success(self, username):
@@ -145,9 +145,9 @@ class Main_ui:
         for i in range(self.ui.tableWidget.rowCount()):  # find the position of username
             if self.ui.tableWidget.item(i, 0).text() == username:
                 if i == 0:
-                    filename = 'Account/main.txt'
+                    filename = '../Account/main.txt'
                 else:
-                    filename = 'Account/' + self.username + '/' + username + '.txt'
+                    filename = '../Account/' + self.username + '/' + username + '.txt'
 
                 with open(filename, 'r') as f:
                     f.readline()
@@ -232,9 +232,9 @@ class Main_ui:
         self.update_btn_status(False)
         for i in range(self.sync_count):
             if i == 0:
-                file = 'Account/main.txt'
+                file = '../Account/main.txt'
             else:
-                file = 'Account/' + self.username + '/' + self.ui.tableWidget.item(i, 0).text() + '.txt'
+                file = '../Account/' + self.username + '/' + self.ui.tableWidget.item(i, 0).text() + '.txt'
             thread = Thread(target=sync_thread, args=(file,))
             thread.start()
 

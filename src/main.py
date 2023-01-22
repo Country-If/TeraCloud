@@ -43,10 +43,10 @@ class Main:
 
         :return: None
         """
-        if os.path.exists("Account/" + self.main_login_ui.username):
-            file_list = os.listdir("Account/" + self.main_login_ui.username)
+        if os.path.exists("../Account/" + self.main_login_ui.username):
+            file_list = os.listdir("../Account/" + self.main_login_ui.username)
             for file in file_list:
-                with open("Account/" + self.main_login_ui.username + '/' + file, 'r') as f:
+                with open("../Account/" + self.main_login_ui.username + '/' + file, 'r') as f:
                     username = f.readline().strip()
                     f.readline()
                     capacity = f.readline().strip()

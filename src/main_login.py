@@ -26,7 +26,7 @@ class Main_login_ui:
         实例化对象
         """
         # 动态加载界面
-        self.ui = uic.loadUi("UI/main_login.ui")
+        self.ui = uic.loadUi("../UI/main_login.ui")
         self.ui.checkBox.setChecked(True)
         self.__setup_ui()
 
@@ -55,8 +55,8 @@ class Main_login_ui:
 
         :return: None
         """
-        if os.path.exists("Account/main.txt"):
-            with open("Account/main.txt", 'r') as f:
+        if os.path.exists("../Account/main.txt"):
+            with open("../Account/main.txt", 'r') as f:
                 self.ui.userid.setText(f.readline().strip())
                 f.close()
 
@@ -66,11 +66,11 @@ class Main_login_ui:
 
         :return: None
         """
-        if not os.path.exists("Account/main.txt"):
+        if not os.path.exists("../Account/main.txt"):
             QMessageBox.critical(self.ui, '错误', "未登录过，无法自动登录")
         else:
             # 读取信息
-            with open('Account/main.txt', 'r') as f:
+            with open('../Account/main.txt', 'r') as f:
                 self.username = f.readline().strip()
                 f.readline()
                 self.capacity = f.readline().strip()
@@ -150,9 +150,9 @@ class Main_login_ui:
                         self.last_sync_time = datetime.datetime.now().strftime('%Y-%m-%d')
                         write_sync_time()
                         # 写入文件
-                        if not os.path.exists("Account"):
-                            os.mkdir("Account")
-                        with open('Account/main.txt', 'w') as file:
+                        if not os.path.exists("../Account"):
+                            os.mkdir("../Account")
+                        with open('../Account/main.txt', 'w') as file:
                             file.write(username + '\n')
                             file.write(" ".join([str(i) for i in sum(encrypt(password, username), [])]) + '\n')
                             file.write(capacity + '\n')
@@ -166,7 +166,7 @@ class Main_login_ui:
                 self.mySignals.time_out_signal.emit()
 
         # 判断文件是否存在
-        if not os.path.exists('Account/main.txt'):
+        if not os.path.exists('../Account/main.txt'):
             self.update_btn_status(False)  # 禁用按钮
             thread1 = Thread(target=inform_thread)
             thread2 = Thread(target=login_check_thread)
@@ -174,12 +174,12 @@ class Main_login_ui:
             thread2.start()
         else:
             # 读取信息
-            with open('Account/main.txt', 'r') as f:
+            with open('../Account/main.txt', 'r') as f:
                 username_fromFile = f.readline().strip()
                 password_encrypted = f.readline().strip()
                 capacity_fromFile = f.readline().strip()
                 f.close()
-            with open('Data/last_sync_time.txt', 'r') as f:
+            with open('../Data/last_sync_time.txt', 'r') as f:
                 last_sync_time = f.readline().strip()
                 f.close()
             # 验证账号和密码的哈希值
@@ -190,8 +190,8 @@ class Main_login_ui:
                 self.last_sync_time = last_sync_time
                 self.update_status(True)
                 self.mySignals.login2main_signal.emit()
-                if not os.path.exists("Account/" + self.username):
-                    os.mkdir("Account/" + self.username)
+                if not os.path.exists("../Account/" + self.username):
+                    os.mkdir("../Account/" + self.username)
             elif username_fromFile != username:
                 self.update_btn_status(False)  # 禁用按钮
                 thread1 = Thread(target=inform_thread)
@@ -223,8 +223,8 @@ class Main_login_ui:
         self.msgBox.button(QMessageBox.Ok).animateClick()
         self.update_status(True)
         self.mySignals.login2main_signal.emit()
-        if not os.path.exists("Account/" + self.username):
-            os.mkdir("Account/" + self.username)
+        if not os.path.exists("../Account/" + self.username):
+            os.mkdir("../Account/" + self.username)
 
     def fail_login(self):
         """

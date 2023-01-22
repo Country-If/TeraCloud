@@ -24,7 +24,7 @@ class SubAccount_login_ui(QDialog):
         """
         # 动态加载界面
         super().__init__()
-        uic.loadUi("UI/subAccount_login.ui", self)
+        uic.loadUi("../UI/subAccount_login.ui", self)
 
         # 类属性
         self.msgBox = QMessageBox(parent=self)
@@ -90,7 +90,7 @@ class SubAccount_login_ui(QDialog):
                     if flag:
                         write_sync_time()
                         # 写入文件
-                        with open('Account/' + self.main_username + '/' + username + '.txt', 'w') as file:
+                        with open('../Account/' + self.main_username + '/' + username + '.txt', 'w') as file:
                             file.write(username + '\n')
                             file.write(" ".join([str(i) for i in sum(encrypt(password, username), [])]) + '\n')
                             file.write(capacity + '\n')
@@ -104,7 +104,7 @@ class SubAccount_login_ui(QDialog):
             except FunctionTimedOut:
                 self.mySignals.time_out_signal.emit()
 
-        if os.path.exists('Account/' + self.main_username + '/' + username + '.txt'):
+        if os.path.exists('../Account/' + self.main_username + '/' + username + '.txt'):
             QMessageBox.information(self, '提示', '该账号已存在')
         else:
             self.Login_btn.setEnabled(False)  # 禁用按钮
