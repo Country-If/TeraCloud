@@ -53,7 +53,7 @@
 
   ```
   pip3 install pyinstaller    # 安装pyinstaller
-  pyinstaller -F -w main.py   # -F: 打包成单个exe文件，-w: 不显示cmd窗口
+  pyinstaller -F -w --distpath dist/exe src/main.py   # -F: 打包成单个exe文件，-w: 不显示cmd窗口 --distpath: 打包后的exe文件存放路径
   ```
 
 - ISSUES
