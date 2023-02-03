@@ -136,12 +136,16 @@ class Main_ui:
         :param row: row number
         :return: None
         """
-        del_username = self.ui.tableWidget.item(row, 0).text()
-        del_capacity = self.ui.tableWidget.item(row, 1).text()
-        self.add_del_sum_capacity(del_capacity, '-')
-        self.ui.tableWidget.removeRow(row)
-        os.remove('../Account/' + self.username + '/' + del_username + '.txt')
-        QMessageBox.information(self.ui, '提示', del_username + '删除成功')
+        reply = QMessageBox.question(self.ui, '删除用户', '是否删除 ' + self.ui.tableWidget.item(row, 0).text() + ' ?',
+                                     QMessageBox.Yes | QMessageBox.No,
+                                     QMessageBox.No)
+        if reply == QMessageBox.Yes:
+            del_username = self.ui.tableWidget.item(row, 0).text()
+            del_capacity = self.ui.tableWidget.item(row, 1).text()
+            self.add_del_sum_capacity(del_capacity, '-')
+            self.ui.tableWidget.removeRow(row)
+            os.remove('../Account/' + self.username + '/' + del_username + '.txt')
+            QMessageBox.information(self.ui, '提示', del_username + '删除成功')
 
     def sync_success(self, row, username, global_operation):
         """
