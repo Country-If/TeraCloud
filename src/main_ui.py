@@ -11,12 +11,16 @@ from PyQt5 import uic
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QBrush, QColor
 from PyQt5.QtWidgets import QApplication, QTableWidgetItem, QHeaderView, QMessageBox, QInputDialog, QLineEdit, QMenu
+from func_timeout import func_set_timeout
 from func_timeout.exceptions import FunctionTimedOut
 
 from Signal import MainUI_Signals as MySignals
 from TeraCloud import TeraCloud
 from common import *
 from subAccount_login import SubAccount_login_ui
+
+# 设置超时时间
+timeout_seconds = 60
 
 
 class Main_ui:
@@ -35,6 +39,7 @@ class Main_ui:
         self.mySignals = MySignals()
         self.sync_count = None
         self.msgBox = QMessageBox(parent=self.ui)
+        self.user_list = []
 
         # 信号与槽连接
         self.ui.add_btn.clicked.connect(self.add_account)
@@ -48,6 +53,7 @@ class Main_ui:
         self.mySignals.sync_success_signal.connect(self.sync_success)
         self.mySignals.sync_fail_signal.connect(self.sync_fail)
         self.mySignals.sync_time_out_signal.connect(self.time_out)
+        self.mySignals.sync_stop_signal.connect(self.sync_stop)
 
     def generate_menu(self, pos):
         """
@@ -144,9 +150,7 @@ class Main_ui:
         :return: None
         """
         self.sync_count -= 1
-        if self.sync_count == 0:
-            self.update_btn_status(True)
-            self.msgBox.button(QMessageBox.Ok).animateClick()
+        self.user_list.remove(row)
         self.reload_tableWidget_sumCapacity(username)
         self.sync_time()
         QMessageBox.information(self.ui, '提示', username + '同步成功')
@@ -161,9 +165,6 @@ class Main_ui:
         :return: None
         """
         self.sync_count -= 1
-        if self.sync_count == 0:
-            self.update_btn_status(True)
-            self.msgBox.button(QMessageBox.Ok).animateClick()
         QMessageBox.critical(self.ui, '错误', username + '同步失败')
         self.ui.tableWidget.item(row, 0).setForeground(QBrush(QColor(255, 0, 0)))
 
@@ -176,11 +177,47 @@ class Main_ui:
         :return: None
         """
         self.sync_count -= 1
-        if self.sync_count == 0:
-            self.update_btn_status(True)
-            self.msgBox.button(QMessageBox.Ok).animateClick()
         QMessageBox.critical(self.ui, '错误', username + '同步超时')
         self.ui.tableWidget.item(row, 0).setForeground(QBrush(QColor(255, 0, 0)))
+
+    def sync_status_thread(self):
+        """
+        sync status thread
+
+        :return: None
+        """
+        try:
+            self.sync_status()
+        except FunctionTimedOut:
+            self.mySignals.sync_stop_signal.emit()
+
+    @func_set_timeout(timeout_seconds)
+    def sync_status(self):
+        """
+        sync status
+
+        :return: None
+        """
+        while True:
+            if self.sync_count == 0:
+                self.update_btn_status(True)
+                self.msgBox.button(QMessageBox.Ok).animateClick()
+                break
+
+    def sync_stop(self):
+        """
+        stop sync
+
+        :return: None
+        """
+        self.update_btn_status(True)
+        self.msgBox.button(QMessageBox.Ok).animateClick()
+        username = []
+        for i in self.user_list:
+            username.append(self.ui.tableWidget.item(i, 0).text())
+        QMessageBox.critical(self.ui, '错误', str(username) + ' 同步超时')
+        for i in self.user_list:
+            self.ui.tableWidget.item(i, 0).setForeground(QBrush(QColor(255, 0, 0)))
 
     def reload_tableWidget_sumCapacity(self, username):
         """
@@ -275,8 +312,11 @@ class Main_ui:
             self.mySignals.inform_signal.emit()
 
         self.sync_count = self.ui.tableWidget.rowCount()
+        self.user_list = list(range(self.sync_count))
         thread_inform = Thread(target=inform_thread)
         thread_inform.start()
+        thread_status = Thread(target=self.sync_status_thread)
+        thread_status.start()
         self.update_btn_status(False)
         for i in range(self.sync_count):
             file = self.get_filename(i)
