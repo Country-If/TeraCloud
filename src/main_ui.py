@@ -10,7 +10,7 @@ from threading import Thread
 from PyQt5 import uic
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QBrush, QColor
-from PyQt5.QtWidgets import QApplication, QTableWidgetItem, QHeaderView, QMessageBox, QInputDialog, QLineEdit
+from PyQt5.QtWidgets import QApplication, QTableWidgetItem, QHeaderView, QMessageBox, QInputDialog, QLineEdit, QMenu
 from func_timeout.exceptions import FunctionTimedOut
 
 from Signal import MainUI_Signals as MySignals
@@ -41,11 +41,46 @@ class Main_ui:
         self.ui.sync_btn.clicked.connect(self.sync_information)
         self.ui.del_one_btn.clicked.connect(self.del_one_account)
         self.ui.del_main_btn.clicked.connect(self.del_main_account)
+        self.ui.tableWidget.setContextMenuPolicy(Qt.CustomContextMenu)  # 允许右键产生子菜单
+        self.ui.tableWidget.customContextMenuRequested.connect(self.generate_menu)  # 右键菜单
         self.mySignals.inform_signal.connect(self.inform)
         self.mySignals.login_success_signal.connect(self.sub_login)
         self.mySignals.sync_success_signal.connect(self.sync_success)
         self.mySignals.sync_fail_signal.connect(self.sync_fail)
         self.mySignals.sync_time_out_signal.connect(self.time_out)
+
+    def generate_menu(self, pos):
+        """
+        generate menu
+
+        :param pos: position
+        :return: None
+        """
+        menu = QMenu()
+        item_sync = menu.addAction("re-sync")
+        action = menu.exec_(self.ui.tableWidget.mapToGlobal(pos))
+
+        if action == item_sync:
+            # get current row
+            row = self.ui.tableWidget.currentRow()
+            # get file name
+            file = self.get_filename(row)
+
+            thread = Thread(target=self.sync_thread, args=(file, row))
+            thread.start()
+
+    def get_filename(self, row):
+        """
+        get file name
+
+        :param row: row
+        :return: file name
+        """
+        if row == 0:
+            file = '../Account/main.txt'
+        else:
+            file = '../Account/' + self.username + '/' + self.ui.tableWidget.item(row, 0).text() + '.txt'
+        return file
 
     def del_main_account(self):
         """
@@ -187,6 +222,40 @@ class Main_ui:
             str(original_used - old_used + new_used) + 'GB / ' + str(original_all - old_all + new_all) + 'GB'
         )
 
+    def sync_thread(self, filename, row):
+        """
+        sync thread
+
+        :param filename: filename
+        :param row: row number
+        """
+        with open(filename, 'r') as f:
+            username = f.readline().strip()
+            passwd = f.readline().strip()
+            password_plaintext = get_password_plaintext(username, passwd)
+            f.close()
+
+        try:
+            teraCloud = TeraCloud(username, password_plaintext)
+            flag, message = teraCloud.get_browser_source()
+            if flag:
+                flag, capacity = teraCloud.get_capacity()
+                if flag:
+                    write_sync_time()
+                    # 写入文件
+                    with open(filename, 'w') as f:
+                        f.write(username + '\n')
+                        f.write(passwd + '\n')
+                        f.write(capacity + '\n')
+                        f.close()
+                        self.mySignals.sync_success_signal.emit(row, username)
+                else:
+                    self.mySignals.sync_fail_signal.emit(row, username)
+            else:
+                self.mySignals.sync_fail_signal.emit(row, username)
+        except FunctionTimedOut:
+            self.mySignals.sync_time_out_signal.emit(row, username)
+
     def sync_information(self):
         """
         sync all accounts' information
@@ -200,50 +269,13 @@ class Main_ui:
             """
             self.mySignals.inform_signal.emit()
 
-        def sync_thread(filename, row):
-            """
-            sync thread
-
-            :param filename: filename
-            :param row: row number
-            """
-            with open(filename, 'r') as f:
-                username = f.readline().strip()
-                passwd = f.readline().strip()
-                password_plaintext = get_password_plaintext(username, passwd)
-                f.close()
-
-            try:
-                teraCloud = TeraCloud(username, password_plaintext)
-                flag, message = teraCloud.get_browser_source()
-                if flag:
-                    flag, capacity = teraCloud.get_capacity()
-                    if flag:
-                        write_sync_time()
-                        # 写入文件
-                        with open(filename, 'w') as f:
-                            f.write(username + '\n')
-                            f.write(passwd + '\n')
-                            f.write(capacity + '\n')
-                            f.close()
-                            self.mySignals.sync_success_signal.emit(row, username)
-                    else:
-                        self.mySignals.sync_fail_signal.emit(row, username)
-                else:
-                    self.mySignals.sync_fail_signal.emit(row, username)
-            except FunctionTimedOut:
-                self.mySignals.sync_time_out_signal.emit(row, username)
-
         self.sync_count = self.ui.tableWidget.rowCount()
         thread_inform = Thread(target=inform_thread)
         thread_inform.start()
         self.update_btn_status(False)
         for i in range(self.sync_count):
-            if i == 0:
-                file = '../Account/main.txt'
-            else:
-                file = '../Account/' + self.username + '/' + self.ui.tableWidget.item(i, 0).text() + '.txt'
-            thread = Thread(target=sync_thread, args=(file, i))
+            file = self.get_filename(i)
+            thread = Thread(target=self.sync_thread, args=(file, i))
             thread.start()
 
     def sub_login(self, add_username, capacity):
