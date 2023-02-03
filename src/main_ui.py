@@ -95,10 +95,11 @@ class Main_ui:
         os.remove('../Account/' + self.username + '/' + del_username + '.txt')
         QMessageBox.information(self.ui, '提示', del_username + '删除成功')
 
-    def sync_success(self, username):
+    def sync_success(self, row, username):
         """
         show sync success message
 
+        :param row: row number
         :param username: username
         :return: None
         """
@@ -109,6 +110,7 @@ class Main_ui:
         self.reload_tableWidget_sumCapacity(username)
         self.sync_time()
         QMessageBox.information(self.ui, '提示', username + '同步成功')
+        self.ui.tableWidget.item(row, 0).setForeground(QBrush(QColor(0, 0, 0)))
 
     def sync_fail(self, row, username):
         """
@@ -224,7 +226,7 @@ class Main_ui:
                             f.write(passwd + '\n')
                             f.write(capacity + '\n')
                             f.close()
-                            self.mySignals.sync_success_signal.emit(username)
+                            self.mySignals.sync_success_signal.emit(row, username)
                     else:
                         self.mySignals.sync_fail_signal.emit(row, username)
                 else:
