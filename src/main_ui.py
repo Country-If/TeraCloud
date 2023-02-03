@@ -72,8 +72,10 @@ class Main_ui:
         file = self.get_filename(row)
 
         if action == item_sync:
-            thread = Thread(target=self.sync_thread, args=(file, row))
-            thread.start()
+            thread_inform = Thread(target=self.inform_thread)
+            thread_inform.start()
+            thread_sync = Thread(target=self.sync_thread, args=(file, row, False))
+            thread_sync.start()
         elif action == itme_del:
             if row == 0:
                 QMessageBox.critical(self.ui, '错误', '主账号不能删除')
@@ -141,42 +143,51 @@ class Main_ui:
         os.remove('../Account/' + self.username + '/' + del_username + '.txt')
         QMessageBox.information(self.ui, '提示', del_username + '删除成功')
 
-    def sync_success(self, row, username):
+    def sync_success(self, row, username, global_operation):
         """
         show sync success message
 
         :param row: row number
         :param username: username
+        :param global_operation: global operation
         :return: None
         """
-        self.sync_count -= 1
-        self.user_list.remove(row)
+        if global_operation:
+            self.sync_count -= 1
+            self.user_list.remove(row)
+        self.msgBox.button(QMessageBox.Ok).animateClick()
         self.reload_tableWidget_sumCapacity(username)
         self.sync_time()
         QMessageBox.information(self.ui, '提示', username + '同步成功')
         self.ui.tableWidget.item(row, 0).setForeground(QBrush(QColor(0, 0, 0)))
 
-    def sync_fail(self, row, username):
+    def sync_fail(self, row, username, global_operation):
         """
         show sync fail message
 
         :param row: row number
         :param username: username
+        :param global_operation: global operation
         :return: None
         """
-        self.sync_count -= 1
+        if global_operation:
+            self.sync_count -= 1
+        self.msgBox.button(QMessageBox.Ok).animateClick()
         QMessageBox.critical(self.ui, '错误', username + '同步失败')
         self.ui.tableWidget.item(row, 0).setForeground(QBrush(QColor(255, 0, 0)))
 
-    def time_out(self, row, username):
+    def time_out(self, row, username, global_operation):
         """
         show time out message
 
         :param row: row number
         :param username: username
+        :param global_operation: global operation
         :return: None
         """
-        self.sync_count -= 1
+        if global_operation:
+            self.sync_count -= 1
+        self.msgBox.button(QMessageBox.Ok).animateClick()
         QMessageBox.critical(self.ui, '错误', username + '同步超时')
         self.ui.tableWidget.item(row, 0).setForeground(QBrush(QColor(255, 0, 0)))
 
@@ -264,12 +275,20 @@ class Main_ui:
             str(original_used - old_used + new_used) + 'GB / ' + str(original_all - old_all + new_all) + 'GB'
         )
 
-    def sync_thread(self, filename, row):
+    def inform_thread(self):
+        """
+        inform thread
+        """
+        self.mySignals.inform_signal.emit()
+
+    def sync_thread(self, filename, row, global_operation):
         """
         sync thread
 
         :param filename: filename
         :param row: row number
+        :param global_operation: global operation
+        :return: None
         """
         with open(filename, 'r') as f:
             username = f.readline().strip()
@@ -290,13 +309,13 @@ class Main_ui:
                         f.write(passwd + '\n')
                         f.write(capacity + '\n')
                         f.close()
-                        self.mySignals.sync_success_signal.emit(row, username)
+                        self.mySignals.sync_success_signal.emit(row, username, global_operation)
                 else:
-                    self.mySignals.sync_fail_signal.emit(row, username)
+                    self.mySignals.sync_fail_signal.emit(row, username, global_operation)
             else:
-                self.mySignals.sync_fail_signal.emit(row, username)
+                self.mySignals.sync_fail_signal.emit(row, username, global_operation)
         except FunctionTimedOut:
-            self.mySignals.sync_time_out_signal.emit(row, username)
+            self.mySignals.sync_time_out_signal.emit(row, username, global_operation)
 
     def sync_information(self):
         """
@@ -304,23 +323,16 @@ class Main_ui:
 
         :return: None
         """
-
-        def inform_thread():
-            """
-            inform thread
-            """
-            self.mySignals.inform_signal.emit()
-
         self.sync_count = self.ui.tableWidget.rowCount()
         self.user_list = list(range(self.sync_count))
-        thread_inform = Thread(target=inform_thread)
+        thread_inform = Thread(target=self.inform_thread)
         thread_inform.start()
         thread_status = Thread(target=self.sync_status_thread)
         thread_status.start()
         self.update_btn_status(False)
         for i in range(self.sync_count):
             file = self.get_filename(i)
-            thread = Thread(target=self.sync_thread, args=(file, i))
+            thread = Thread(target=self.sync_thread, args=(file, i, True))
             thread.start()
 
     def sub_login(self, add_username, capacity):
