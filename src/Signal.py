@@ -30,5 +30,5 @@ class MainUI_Signals(QObject):
     login_success_signal = pyqtSignal()
 
     sync_success_signal = pyqtSignal(str)
-    sync_fail_signal = pyqtSignal(str)
-    sync_time_out_signal = pyqtSignal(str)
+    sync_fail_signal = pyqtSignal(int, str)
+    sync_time_out_signal = pyqtSignal(int, str)

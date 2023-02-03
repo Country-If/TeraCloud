@@ -9,6 +9,7 @@ from threading import Thread
 
 from PyQt5 import uic
 from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QBrush, QColor
 from PyQt5.QtWidgets import QApplication, QTableWidgetItem, QHeaderView, QMessageBox, QInputDialog, QLineEdit
 from func_timeout.exceptions import FunctionTimedOut
 
@@ -109,10 +110,11 @@ class Main_ui:
         self.sync_time()
         QMessageBox.information(self.ui, '提示', username + '同步成功')
 
-    def sync_fail(self, username):
+    def sync_fail(self, row, username):
         """
         show sync fail message
 
+        :param row: row number
         :param username: username
         :return: None
         """
@@ -121,11 +123,13 @@ class Main_ui:
             self.update_btn_status(True)
             self.msgBox.button(QMessageBox.Ok).animateClick()
         QMessageBox.critical(self.ui, '错误', username + '同步失败')
+        self.ui.tableWidget.item(row, 0).setForeground(QBrush(QColor(255, 0, 0)))
 
-    def time_out(self, username):
+    def time_out(self, row, username):
         """
         show time out message
 
+        :param row: row number
         :param username: username
         :return: None
         """
@@ -134,6 +138,7 @@ class Main_ui:
             self.update_btn_status(True)
             self.msgBox.button(QMessageBox.Ok).animateClick()
         QMessageBox.critical(self.ui, '错误', username + '同步超时')
+        self.ui.tableWidget.item(row, 0).setForeground(QBrush(QColor(255, 0, 0)))
 
     def reload_tableWidget_sumCapacity(self, username):
         """
@@ -193,11 +198,12 @@ class Main_ui:
             """
             self.mySignals.inform_signal.emit()
 
-        def sync_thread(filename):
+        def sync_thread(filename, row):
             """
             sync thread
 
             :param filename: filename
+            :param row: row number
             """
             with open(filename, 'r') as f:
                 username = f.readline().strip()
@@ -220,11 +226,11 @@ class Main_ui:
                             f.close()
                             self.mySignals.sync_success_signal.emit(username)
                     else:
-                        self.mySignals.sync_fail_signal.emit(username)
+                        self.mySignals.sync_fail_signal.emit(row, username)
                 else:
-                    self.mySignals.sync_fail_signal.emit(username)
+                    self.mySignals.sync_fail_signal.emit(row, username)
             except FunctionTimedOut:
-                self.mySignals.sync_time_out_signal.emit(username)
+                self.mySignals.sync_time_out_signal.emit(row, username)
 
         self.sync_count = self.ui.tableWidget.rowCount()
         thread_inform = Thread(target=inform_thread)
@@ -235,7 +241,7 @@ class Main_ui:
                 file = '../Account/main.txt'
             else:
                 file = '../Account/' + self.username + '/' + self.ui.tableWidget.item(i, 0).text() + '.txt'
-            thread = Thread(target=sync_thread, args=(file,))
+            thread = Thread(target=sync_thread, args=(file, i))
             thread.start()
 
     def sub_login(self, add_username, capacity):
