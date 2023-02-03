@@ -58,16 +58,21 @@ class Main_ui:
         """
         menu = QMenu()
         item_sync = menu.addAction("re-sync")
+        itme_del = menu.addAction("delete account")
         action = menu.exec_(self.ui.tableWidget.mapToGlobal(pos))
+        # get current row
+        row = self.ui.tableWidget.currentRow()
+        # get file name
+        file = self.get_filename(row)
 
         if action == item_sync:
-            # get current row
-            row = self.ui.tableWidget.currentRow()
-            # get file name
-            file = self.get_filename(row)
-
             thread = Thread(target=self.sync_thread, args=(file, row))
             thread.start()
+        elif action == itme_del:
+            if row == 0:
+                QMessageBox.critical(self.ui, '错误', '主账号不能删除')
+            else:
+                self.del_account(row)
 
     def get_filename(self, row):
         """
