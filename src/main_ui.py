@@ -301,7 +301,7 @@ class Main_ui:
             f.close()
 
         try:
-            teraCloud = TeraCloud(username, password_plaintext)
+            teraCloud = TeraCloud(username, password=password_plaintext)
             flag, message = teraCloud.get_browser_source()
             if flag:
                 flag, capacity = teraCloud.get_capacity()

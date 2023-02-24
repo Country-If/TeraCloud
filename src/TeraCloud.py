@@ -16,7 +16,7 @@ timeout_seconds = 30
 
 
 class TeraCloud:
-    def __init__(self, username, password, sleep_time=6, debug=False):
+    def __init__(self, username, password=None, sleep_time=6, debug=False):
         """
         TeraCloud类初始化
 

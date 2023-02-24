@@ -140,7 +140,7 @@ class Main_login_ui:
             登录检查线程
             """
             try:
-                teraCloud = TeraCloud(username, password)
+                teraCloud = TeraCloud(username, password=password)
                 flag, message = teraCloud.get_browser_source()
                 if flag:
                     flag, capacity = teraCloud.get_capacity()
