@@ -116,9 +116,26 @@ class TeraCloud:
             print("Success!")
             return True, res[0]
 
+    def get_bonus(self, code):
+        """
+        获取奖励
+
+        :param code: 奖励码
+        :return: None
+        """
+        url_origin = "https://teracloud.jp/en/modules/bonus/code=" + code + "/userid=" + self.username + "/"
+        self.browser.get(url_origin)
+        if "Congratulations" in self.browser.page_source:
+            return True
+        else:
+            return False
+
 
 if __name__ == '__main__':
     T = TeraCloud(input("Username: "), input("Password: "), debug=False)
+
+    print(T.get_bonus("202302_1GB_en"))
+
     flag, message = T.get_browser_source()
     print(message)
     if flag:
