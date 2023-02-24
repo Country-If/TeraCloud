@@ -46,6 +46,7 @@ class Main_ui:
         self.ui.sync_btn.clicked.connect(self.sync_information)
         self.ui.del_one_btn.clicked.connect(self.del_one_account)
         self.ui.del_main_btn.clicked.connect(self.del_main_account)
+        self.ui.add_bonus_btn.clicked.connect(self.add_bonus)
         self.ui.tableWidget.setContextMenuPolicy(Qt.CustomContextMenu)  # 允许右键产生子菜单
         self.ui.tableWidget.customContextMenuRequested.connect(self.generate_menu)  # 右键菜单
         self.mySignals.inform_signal.connect(self.inform)
@@ -54,6 +55,49 @@ class Main_ui:
         self.mySignals.sync_fail_signal.connect(self.sync_fail)
         self.mySignals.sync_time_out_signal.connect(self.time_out)
         self.mySignals.sync_stop_signal.connect(self.sync_stop)
+        self.mySignals.bonus_success_signal.connect(self.bonus_success)
+        self.mySignals.bonus_fail_signal.connect(self.bonus_fail)
+
+    def bonus_success(self, row, username):
+        """
+        bonus success
+
+        :param row: 行数
+        :param username: 用户名
+        :return: None
+        """
+        QMessageBox.information(self.ui, '提示', username + '请求成功')
+        self.ui.tableWidget.item(row, 0).setForeground(QBrush(QColor(0, 0, 0)))
+
+    def bonus_fail(self, row, username):
+        """
+        bonus fail
+
+        :param row: 行数
+        :param username: 用户名
+        :return: None
+        """
+        QMessageBox.critical(self.ui, '错误', username + '请求失败')
+        self.ui.tableWidget.item(row, 0).setForeground(QBrush(QColor(255, 0, 0)))
+
+    def add_bonus(self):
+        """
+        add bonus
+
+        :return: None
+        """
+        # 弹窗获取奖励码
+        bonus_code, ok = QInputDialog.getText(self.ui, '奖励码', '请输入奖励码', QLineEdit.Normal, '')
+        if ok:
+            if bonus_code == '':
+                QMessageBox.critical(self.ui, '错误', '奖励码不能为空')
+            else:
+                # 弹窗提示
+                QMessageBox.information(self.ui, '提示', '奖励码已提交，稍后请更新容量')
+                # 批量请求奖励
+                for i in range(self.ui.tableWidget.rowCount()):
+                    T = Thread(target=self.bonus_thread, args=(i, bonus_code))
+                    T.start()
 
     def generate_menu(self, pos):
         """
@@ -65,6 +109,7 @@ class Main_ui:
         menu = QMenu()
         item_sync = menu.addAction("re-sync")
         itme_del = menu.addAction("delete account")
+        item_bonus = menu.addAction("re-bonus")
         action = menu.exec_(self.ui.tableWidget.mapToGlobal(pos))
         # get current row
         row = self.ui.tableWidget.currentRow()
@@ -81,6 +126,31 @@ class Main_ui:
                 QMessageBox.critical(self.ui, '错误', '主账号不能删除')
             else:
                 self.del_account(row)
+        elif action == item_bonus:
+            bonus_code, ok = QInputDialog.getText(self.ui, '奖励码', '请输入奖励码', QLineEdit.Normal, '')
+            if ok:
+                if bonus_code == '':
+                    QMessageBox.critical(self.ui, '错误', '奖励码不能为空')
+                else:
+                    QMessageBox.information(self.ui, '提示', '奖励码已提交，稍后请更新容量')
+                    T = Thread(target=self.bonus_thread, args=(row, bonus_code))
+                    T.start()
+
+    def bonus_thread(self, i, bonus_code):
+        """
+        bonus thread
+
+        :param i: row
+        :param bonus_code: bonus code
+        :return: None
+        """
+        username = self.ui.tableWidget.item(i, 0).text()
+        row = i
+        Tera = TeraCloud(username)
+        if Tera.get_bonus(bonus_code):
+            self.mySignals.bonus_success_signal.emit(row, username)
+        else:
+            self.mySignals.bonus_fail_signal.emit(row, username)
 
     def get_filename(self, row):
         """
