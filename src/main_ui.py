@@ -346,7 +346,7 @@ class Main_ui:
         old_all = int(re.compile(r'(?<= / ).*(?=GB)').findall(old)[0])
         new_all = int(re.compile(r'(?<= / ).*(?=GB)').findall(new)[0])
         self.ui.sum_label.setText(
-            str(original_used - old_used + new_used) + 'GB / ' + str(original_all - old_all + new_all) + 'GB'
+            str(round(original_used - old_used + new_used, 2)) + 'GB / ' + str(original_all - old_all + new_all) + 'GB'
         )
 
     def inform_thread(self):
@@ -511,9 +511,9 @@ class Main_ui:
         old_all = int(re.compile(r'(?<= / ).*(?=GB)').findall(old_capacity)[0])
         delta_all = int(re.compile(r'(?<= / ).*(?=GB)').findall(capacity)[0])
         if symbol == '+':
-            self.ui.sum_label.setText(str(old_used + delta_used) + 'GB / ' + str(old_all + delta_all) + 'GB')
+            self.ui.sum_label.setText(str(round(old_used + delta_used, 2)) + 'GB / ' + str(old_all + delta_all) + 'GB')
         elif symbol == '-':
-            self.ui.sum_label.setText(str(old_used - delta_used) + 'GB / ' + str(old_all - delta_all) + 'GB')
+            self.ui.sum_label.setText(str(round(old_used - delta_used, 2)) + 'GB / ' + str(old_all - delta_all) + 'GB')
 
     def sync_time(self):
         """
