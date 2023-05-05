@@ -20,7 +20,7 @@
 
 - WebDriver
 
-  使用的是Chrome Driver，版本为 112.0.5615.49，路径设为[ChromeDriver/chromedriver.exe](ChromeDriver/chromedriver.exe)，
+  使用的是Chrome Driver，版本为 113.0.5672.64，路径设为[ChromeDriver/chromedriver.exe](ChromeDriver/chromedriver.exe)，
   可根据实际情况下载对应版本的Chrome Driver。
 
     - 查看chrome版本号
