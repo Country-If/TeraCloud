@@ -16,7 +16,7 @@ timeout_seconds = 30
 
 
 class TeraCloud:
-    def __init__(self, username, password=None, sleep_time=6, debug=False):
+    def __init__(self, username, password=None, browser="", sleep_time=6, debug=False):
         """
         TeraCloud类初始化
 
@@ -30,23 +30,25 @@ class TeraCloud:
         self.sleep = sleep_time
         self.browser_source = None
 
-        driver_path = "../ChromeDriver/chromedriver.exe"
-        chrome_options = webdriver.ChromeOptions()
+        if browser == "Chrome":
+            driver_path = "../Driver/Chrome/chromedriver.exe"
+            browser_options = webdriver.ChromeOptions()
+        elif browser == "Firefox":
+            driver_path = "../Driver/Firefox/geckodriver.exe"
+            browser_options = webdriver.FirefoxOptions()
+        elif browser == "Edge":
+            driver_path = "../Driver/Edge/msedgedriver.exe"
+            browser_options = webdriver.EdgeOptions()
+        else:
+            raise Exception("Browser not found")
+
         if not debug:  # 不显示浏览器
-            chrome_options.add_argument('--headless')
-            chrome_options.add_argument('--disable-gpu')
+            browser_options.add_argument('--headless')
+            browser_options.add_argument('--disable-gpu')
         if not os.path.exists(driver_path):
             raise Exception("chromedriver.exe not found")
-        chrome_service = Service(driver_path)
-        self.browser = webdriver.Chrome(service=chrome_service, options=chrome_options)
-        # 规避检测
-        self.browser.execute_cdp_cmd("Page.addScriptToEvaluateOnNewDocument", {
-            "source": """   
-                    Object.defineProperty(navigator, 'webdriver', {
-                      get: () => undefined
-                    })
-                  """
-        })
+        driver_service = Service(driver_path)
+        self.browser = webdriver.Chrome(service=driver_service, options=browser_options)
 
     @func_set_timeout(timeout_seconds)
     def get_browser_source(self):

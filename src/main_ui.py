@@ -40,6 +40,7 @@ class Main_ui:
         self.sync_count = None
         self.msgBox = QMessageBox(parent=self.ui)
         self.user_list = []
+        self.browser = ""
 
         # 信号与槽连接
         self.ui.add_btn.clicked.connect(self.add_account)
@@ -146,7 +147,7 @@ class Main_ui:
         """
         username = self.ui.tableWidget.item(i, 0).text()
         row = i
-        Tera = TeraCloud(username)
+        Tera = TeraCloud(username, browser=self.browser)
         if Tera.get_bonus(bonus_code):
             self.mySignals.bonus_success_signal.emit(row, username)
         else:
@@ -371,7 +372,7 @@ class Main_ui:
             f.close()
 
         try:
-            teraCloud = TeraCloud(username, password=password_plaintext)
+            teraCloud = TeraCloud(username, password=password_plaintext, browser=self.browser)
             flag, message = teraCloud.get_browser_source()
             if flag:
                 flag, capacity = teraCloud.get_capacity()
@@ -426,7 +427,7 @@ class Main_ui:
 
         :return: None
         """
-        sub_ui = SubAccount_login_ui(self.username)
+        sub_ui = SubAccount_login_ui(main_username=self.username, browser=self.browser)
         sub_ui.mySignals.subAccount_login_success.connect(self.sub_login)
         sub_ui.exec_()
 

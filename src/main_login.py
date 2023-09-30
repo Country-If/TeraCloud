@@ -38,6 +38,7 @@ class Main_login_ui:
         self.mySignals = MySignals()
         self.msgBox = QMessageBox(parent=self.ui)
         self.remember_password = True
+        self.browser = "Chrome"
 
         # 信号与槽连接
         self.ui.Login_btn.clicked.connect(self.login)
@@ -48,6 +49,9 @@ class Main_login_ui:
         self.mySignals.login_success_signal.connect(self.success_login)
         self.mySignals.login_fail_signal.connect(self.fail_login)
         self.mySignals.time_out_signal.connect(self.time_out)
+        self.ui.Chrome_btn.toggled.connect(self.set_browser)
+        self.ui.Firefox_btn.toggled.connect(self.set_browser)
+        self.ui.Edge_btn.toggled.connect(self.set_browser)
 
     def __setup_ui(self):
         """
@@ -140,7 +144,7 @@ class Main_login_ui:
             登录检查线程
             """
             try:
-                teraCloud = TeraCloud(username, password=password)
+                teraCloud = TeraCloud(username, password=password, browser=self.browser)
                 flag, message = teraCloud.get_browser_source()
                 if flag:
                     flag, capacity = teraCloud.get_capacity()
@@ -257,6 +261,19 @@ class Main_login_ui:
         """
         self.ui.Login_btn.setEnabled(status)
         self.ui.auto_login_btn.setEnabled(status)
+
+    def set_browser(self):
+        """
+        set browser
+
+        :return: None
+        """
+        if self.ui.Chrome_btn.isChecked():
+            self.browser = "Chrome"
+        elif self.ui.Firefox_btn.isChecked():
+            self.browser = "Firefox"
+        elif self.ui.Edge_btn.isChecked():
+            self.browser = "Edge"
 
 
 if __name__ == '__main__':

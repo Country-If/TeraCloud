@@ -20,12 +20,16 @@ class Main:
         # 类属性
         self.main_login_ui = Main_login_ui()
         self.main_ui = Main_ui()
+        self.main_ui.browser = "Chrome"
 
         # 信号与槽连接
         self.main_login_ui.mySignals.login2main_signal.connect(self.login2main)
         self.main_login_ui.ui.auto_login_btn.clicked.connect(self.auto_login)
         self.main_ui.ui.logout_btn.clicked.connect(self.logout)
         self.main_ui.ui.del_main_btn.clicked.connect(self.logout)
+        self.main_login_ui.ui.Chrome_btn.toggled.connect(self.set_browser)
+        self.main_login_ui.ui.Firefox_btn.toggled.connect(self.set_browser)
+        self.main_login_ui.ui.Edge_btn.toggled.connect(self.set_browser)
 
     def auto_login(self):
         """
@@ -85,6 +89,19 @@ class Main:
         self.main_login_ui.ui.show()
         if not self.main_login_ui.remember_password:
             self.main_login_ui.ui.passwd.clear()
+
+    def set_browser(self):
+        """
+        set browser
+
+        :return: None
+        """
+        if self.main_login_ui.ui.Chrome_btn.isChecked():
+            self.main_ui.browser = "Chrome"
+        elif self.main_login_ui.ui.Firefox_btn.isChecked():
+            self.main_ui.browser = "Firefox"
+        elif self.main_login_ui.ui.Edge_btn.isChecked():
+            self.main_ui.browser = "Edge"
 
 
 def main():

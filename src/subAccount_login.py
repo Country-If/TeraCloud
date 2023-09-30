@@ -18,7 +18,7 @@ from common import *
 class SubAccount_login_ui(QDialog):
     """子账号登录"""
 
-    def __init__(self, main_username):
+    def __init__(self, main_username, browser):
         """
         实例化对象
         """
@@ -32,6 +32,7 @@ class SubAccount_login_ui(QDialog):
         self.main_username = main_username
         self.add_username = None
         self.capacity = None
+        self.browser = browser
 
         # 信号与槽连接
         self.Login_btn.clicked.connect(self.login)
@@ -83,7 +84,7 @@ class SubAccount_login_ui(QDialog):
             login check thread
             """
             try:
-                teraCloud = TeraCloud(username, password=password)
+                teraCloud = TeraCloud(username, password=password, browser=self.browser)
                 flag, message = teraCloud.get_browser_source()
                 if flag:
                     flag, capacity = teraCloud.get_capacity()
