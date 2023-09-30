@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>566</width>
+    <width>579</width>
     <height>319</height>
    </rect>
   </property>
@@ -16,7 +16,7 @@
   <widget class="QLabel" name="label_3">
    <property name="geometry">
     <rect>
-     <x>230</x>
+     <x>160</x>
      <y>20</y>
      <width>171</width>
      <height>61</height>
@@ -29,7 +29,7 @@
   <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
-     <x>130</x>
+     <x>60</x>
      <y>100</y>
      <width>301</width>
      <height>41</height>
@@ -51,7 +51,7 @@
   <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
-     <x>130</x>
+     <x>60</x>
      <y>160</y>
      <width>301</width>
      <height>41</height>
@@ -74,10 +74,10 @@
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
-     <x>120</x>
+     <x>50</x>
      <y>220</y>
      <width>321</width>
      <height>71</height>
@@ -116,6 +116,68 @@
      </layout>
     </item>
    </layout>
+  </widget>
+  <widget class="QWidget" name="verticalLayoutWidget">
+   <property name="geometry">
+    <rect>
+     <x>420</x>
+     <y>100</y>
+     <width>141</width>
+     <height>141</height>
+    </rect>
+   </property>
+   <layout class="QVBoxLayout" name="verticalLayout_2">
+    <item>
+     <widget class="QLabel" name="label_4">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="text">
+       <string>Browser Driver</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QRadioButton" name="Chrome_btn">
+      <property name="text">
+       <string>Chrome</string>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QRadioButton" name="Firefox_btn">
+      <property name="text">
+       <string>Firefox</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QRadioButton" name="Edge_btn">
+      <property name="text">
+       <string>Edge</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="Line" name="line">
+   <property name="geometry">
+    <rect>
+     <x>390</x>
+     <y>10</y>
+     <width>21</width>
+     <height>301</height>
+    </rect>
+   </property>
+   <property name="orientation">
+    <enum>Qt::Vertical</enum>
+   </property>
   </widget>
  </widget>
  <resources/>
