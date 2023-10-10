@@ -9,7 +9,12 @@ from time import sleep
 
 from func_timeout import func_set_timeout
 from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
+from webdriver_manager.firefox import GeckoDriverManager
+from webdriver_manager.microsoft import EdgeChromiumDriverManager
+from selenium.webdriver.chrome.service import Service as ChromeService
+from selenium.webdriver.firefox.service import Service as FirefoxService
+from selenium.webdriver.edge.service import Service as EdgeService
 from selenium.webdriver.common.by import By
 
 timeout_seconds = 30
@@ -47,8 +52,25 @@ class TeraCloud:
             browser_options.add_argument('--disable-gpu')
         if not os.path.exists(driver_path):
             raise Exception("chromedriver.exe not found")
-        driver_service = Service(driver_path)
-        self.browser = webdriver.Chrome(service=driver_service, options=browser_options)
+
+        if browser == "Chrome":
+            driver_service = ChromeService(driver_path)
+            self.browser = webdriver.Chrome(
+                # executable_path=ChromeDriverManager().install(),
+                service=driver_service, options=browser_options
+            )
+        elif browser == "Firefox":
+            driver_service = FirefoxService(driver_path)
+            self.browser = webdriver.Firefox(
+                # executable_path=GeckoDriverManager().install(),
+                service=driver_service, options=browser_options
+            )
+        elif browser == "Edge":
+            driver_service = EdgeService(driver_path)
+            self.browser = webdriver.Edge(
+                # executable_path=EdgeChromiumDriverManager().install(),
+                service=driver_service, options=browser_options
+            )
 
     @func_set_timeout(timeout_seconds)
     def get_browser_source(self):
