@@ -35,7 +35,7 @@
 
     - Firefox
 
-      firefox version: 118.0 driver: v0.33
+      firefox version: 118.0 driver: v0.34
 
       download url: [https://github.com/mozilla/geckodriver/releases](https://github.com/mozilla/geckodriver/releases)
 
